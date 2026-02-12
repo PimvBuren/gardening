@@ -150,5 +150,16 @@
     © Groen &amp; Gewoon Doen – Admin Paneel
 </footer>
 
+<script>
+checkLogin().then(user => {
+    if (!user || !user.admin) {
+        alert("Geen toegang");
+        window.location.href = "/";
+    }
+});
+</script>
+
+
+
 </body>
 </html>
