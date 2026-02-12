@@ -1,143 +1,295 @@
 <!DOCTYPE html>
 <html lang="nl">
-<link rel="stylesheet" href="style.css">
-
-<script src="js/functions.js"></script>
-<script src="js/menu.js"></script>
-<script src="js/admin.js"></script>
-
-
 <head>
     <meta charset="UTF-8">
     <title>Klantzijde Groen & Gewoon Doen</title>
-</head>
+    <style>
+        body { font-family: Arial, sans-serif; margin:0; padding:0; }
+        header, footer { background:#eee; padding:10px; text-align:center; }
+        main { padding:20px; }
+        hr { margin:20px 0; }
 
+        /* MODAL STYLES */
+        #auth-modal {
+            display:none;
+            position:fixed;
+            top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.6);
+            justify-content:center;
+            align-items:center;
+        }
+        #auth-modal .modal-content {
+            background:#fff;
+            padding:20px;
+            border-radius:8px;
+            width:300px;
+            position:relative;
+        }
+        #close-modal { position:absolute; top:10px; right:15px; cursor:pointer; }
+        #auth-error { color:red; margin-bottom:10px; }
+        #auth-modal input { width:100%; padding:5px; margin-bottom:10px; }
+        #auth-modal button { width:100%; padding:7px; }
+        #toggle-register { cursor:pointer; color:blue; }
+    </style>
+</head>
 <body>
 
- <header>
-    <h2>Admin – Groen &amp; Gewoon Doen</h2>
-
-    <button id="menu-toggle">☰</button>
-
-    <nav id="main-nav">
-        <a href="admin.html">Admin</a>
-        <a href="#">Logout</a>
-    </nav>
+<header>
+    <h2>Groen & Gewoon Doen</h2>
+    <div id="user-status" style="margin-top: 10px; font-size: 14px;">
+        <span id="login-status"></span>
+        <button id="logout-btn" style="display:none; margin-left: 10px; padding: 5px 10px; cursor: pointer;">Uitloggen</button>
+    </div>
 </header>
 
+<main>
+    <section>
+        <h1>Welkom!</h1>
+        <p>Bestel uw tuinservice eenvoudig online!</p>
+    </section>
 
     <hr>
 
-    <main>
-        <section>
-            <h1>Welkom!</h1>
-            <p>Bestel uw tuinservice eenvoudig online!</p>
-        </section>
-
-        <hr>
-
-        
-        <section>
-            <h3>Standaard Pakketten</h3>
-            <form>
-                <label for="pakket">Kies een pakket:</label>
-                <select id="pakket" name="pakket">
-                    <option value="">-- Kies een pakket --</option>
-                    <option value="onderhoud">Tuin onderhoud</option>
-                    <option value="snoeien">Snoeien</option>
-                    <option value="aanleg">Tuinaanleg</option>
-                </select>
-                <button type="submit">Bestel</button>
-            </form>
-        </section>
-
-        <hr>
-
-        
-        <section>
-            <h3>Custom Offerte</h3>
-            <form>
-                <label>
-                    m² Gras:
-                    <input type="number" name="gras">
-                </label>
-                <br><br>
-
-                <label>
-                    m² Tegels:
-                    <input type="number" name="tegels">
-                </label>
-                <br><br>
-
-                <label>
-                    Meters Heg:
-                    <input type="number" name="heg">
-                </label>
-                <br><br>
-
-                <label>
-                    <input type="checkbox" name="afval">
-                    Afval afvoeren
-                </label>
-                <br>
-
-                <label>
-                    <input type="checkbox" name="spoed">
-                    Spoedservice
-                </label>
-                <br><br>
-
-                <button type="submit">Bereken offerte</button>
-            </form>
-        </section>
-
-        <hr>
-
-        
-        <section>
-            <h3>Mijn Orders</h3>
-            <button>Nieuwe bestelling</button>
-
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>Order ID</th>
-                        <th>Pakket / Info</th>
-                        <th>Offerte</th>
-                        <th>Status</th>
-                        <th>Datum</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>001</td>
-                        <td>Tuin onderhoud</td>
-                        <td>€150</td>
-                        <td>In behandeling</td>
-                        <td>12-03-2026</td>
-                    </tr>
-                    <tr>
-                        <td>002</td>
-                        <td>Custom offerte</td>
-                        <td>€320</td>
-                        <td>Goedgekeurd</td>
-                        <td>20-03-2026</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-    </main>
+    <section>
+        <h3>Standaard Pakketten</h3>
+        <form class="requires-login" id="pakket-form">
+            <label for="pakket">Kies een pakket:</label>
+            <select id="pakket" name="pakket">
+                <option value="">-- Kies een pakket --</option>
+                <option value="onderhoud">Tuin onderhoud</option>
+                <option value="snoeien">Snoeien</option>
+                <option value="aanleg">Tuinaanleg</option>
+            </select>
+            <button type="submit">Bestel</button>
+        </form>
+        <div id="pakket-result" style="margin-top:10px; color:green;"></div>
+    </section>
 
     <hr>
 
-    <footer>
-        <p>
-            <a href="#">Contact</a> |
-            <a href="#">Social Media</a> |
-            <a href="#">Disclaimer</a>
+    <section>
+        <h3>Custom Offerte</h3>
+        <form class="requires-login" id="offerte-form">
+            <label>
+                m² Gras:
+                <input type="number" name="gras" min="0" value="0">
+            </label><br><br>
+
+            <label>
+                m² Tegels:
+                <input type="number" name="tegels" min="0" value="0">
+            </label><br><br>
+
+            <label>
+                Meters Heg:
+                <input type="number" name="heg" min="0" value="0">
+            </label><br><br>
+
+            <label>
+                <input type="checkbox" name="afval"> Afval afvoeren (+€50)
+            </label><br>
+
+            <label>
+                <input type="checkbox" name="spoed"> Spoedservice (+50%)
+            </label><br><br>
+
+            <button type="submit">Bereken offerte</button>
+        </form>
+        <div id="offerte-result" style="margin-top:10px; color:green;"></div>
+    </section>
+</main>
+
+<footer>
+    <p>
+        <a href="#">Contact</a> |
+        <a href="#">Social Media</a> |
+        <a href="#">Disclaimer</a>
+    </p>
+</footer>
+
+<!-- LOGIN / REGISTER MODAL -->
+<div id="auth-modal">
+    <div class="modal-content">
+        <span id="close-modal">✖</span>
+        <h3 id="modal-title">Login</h3>
+        <input type="text" id="auth-username" placeholder="Username">
+        <input type="password" id="auth-password" placeholder="Password">
+        <div id="auth-error"></div>
+        <button id="auth-submit">Login</button>
+        <p style="text-align:center;">
+            <span id="toggle-register">Geen account? Register</span>
         </p>
-    </footer>
+    </div>
+</div>
+
+<script>
+const modal = document.getElementById("auth-modal");
+const closeModal = document.getElementById("close-modal");
+const toggleRegister = document.getElementById("toggle-register");
+const modalTitle = document.getElementById("modal-title");
+const authSubmit = document.getElementById("auth-submit");
+const authUsername = document.getElementById("auth-username");
+const authPassword = document.getElementById("auth-password");
+const authError = document.getElementById("auth-error");
+
+let registerMode = false;
+let pendingForm = null;
+
+// Open / Close modal
+function openAuthModal() { modal.style.display = "flex"; }
+closeModal.onclick = () => modal.style.display = "none";
+
+// Toggle login/register
+toggleRegister.onclick = () => {
+    registerMode = !registerMode;
+    modalTitle.textContent = registerMode ? "Register" : "Login";
+    authSubmit.textContent = registerMode ? "Register" : "Login";
+    toggleRegister.textContent = registerMode ? "Al een account? Login" : "Geen account? Register";
+    authError.textContent = "";
+}
+
+// Submit login/register
+authSubmit.onclick = async () => {
+    const username = authUsername.value.trim();
+    const password = authPassword.value.trim();
+    if(!username || !password){ authError.textContent="Vul beide velden in!"; return; }
+
+    let res;
+    try {
+        if(registerMode) res = await register(username,password);
+        else res = await login(username,password);
+    } catch(e){
+        console.error("Auth error:", e);
+        authError.textContent="Server error!";
+        return;
+    }
+
+    if(res.error) authError.textContent = res.error;
+    else {
+        modal.style.display = "none";
+        authError.textContent = "";
+        authUsername.value = "";
+        authPassword.value = "";
+        
+        // Update login status
+        await updateLoginStatus();
+        
+        if(pendingForm){
+            // Verwerk de pending form
+            if(pendingForm.id === "pakket-form") {
+                await handlePakketBestelling(pendingForm);
+            } else if(pendingForm.id === "offerte-form") {
+                await handleOfferteBestelling(pendingForm);
+            }
+            pendingForm = null;
+        }
+    }
+}
+
+// Intercepteer form submits
+document.querySelectorAll("form.requires-login").forEach(form => {
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const user = await checkLogin();
+        if(!user){
+            pendingForm = form;
+            openAuthModal();
+            return;
+        }
+        
+        // Als ingelogd, verwerk de bestelling
+        if(form.id === "pakket-form") {
+            await handlePakketBestelling(form);
+        } else if(form.id === "offerte-form") {
+            await handleOfferteBestelling(form);
+        }
+    });
+});
+
+// Check login status bij laden pagina
+async function updateLoginStatus() {
+    const user = await checkLogin();
+    const statusEl = document.getElementById("login-status");
+    const logoutBtn = document.getElementById("logout-btn");
+    
+    if(user) {
+        statusEl.textContent = `✓ Ingelogd als: ${user.username}`;
+        statusEl.style.color = "green";
+        logoutBtn.style.display = "inline-block";
+    } else {
+        statusEl.textContent = "";
+        logoutBtn.style.display = "none";
+    }
+}
+
+// Logout functionaliteit
+document.getElementById("logout-btn").addEventListener("click", async () => {
+    await logout();
+});
+
+// Handle pakket bestelling
+async function handlePakketBestelling(form) {
+    const pakket = form.querySelector('[name="pakket"]').value;
+    if(!pakket) {
+        alert("Selecteer eerst een pakket!");
+        return;
+    }
+    
+    const res = await fetch("/bestel-pakket", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ pakket })
+    });
+    
+    const data = await res.json();
+    const resultEl = document.getElementById("pakket-result");
+    
+    if(data.error) {
+        resultEl.textContent = "Error: " + data.error;
+        resultEl.style.color = "red";
+    } else {
+        resultEl.textContent = `✓ Bestelling geplaatst! Pakket: ${data.order.pakket}`;
+        resultEl.style.color = "green";
+        form.reset();
+    }
+}
+
+// Handle offerte bestelling
+async function handleOfferteBestelling(form) {
+    const formData = new FormData(form);
+    const data = {
+        gras: formData.get("gras"),
+        tegels: formData.get("tegels"),
+        heg: formData.get("heg"),
+        afval: formData.get("afval") === "on",
+        spoed: formData.get("spoed") === "on"
+    };
+    
+    const res = await fetch("/bestel-offerte", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+    });
+    
+    const result = await res.json();
+    const resultEl = document.getElementById("offerte-result");
+    
+    if(result.error) {
+        resultEl.textContent = "Error: " + result.error;
+        resultEl.style.color = "red";
+    } else {
+        resultEl.innerHTML = `✓ Offerte aangevraagd!<br>Geschatte prijs: €${result.prijs}`;
+        resultEl.style.color = "green";
+        form.reset();
+    }
+}
+
+// Update login status bij laden
+updateLoginStatus();
+</script>
+
+<!-- LAAD AUTH.JS MET DE ECHTE FUNCTIES -->
+<script src="js/auth.js"></script>
 
 </body>
-
 </html>

@@ -1,0 +1,25 @@
+[
+  {
+    "id": 1,
+    "username": "test",
+    "type": "pakket",
+    "pakket": "onderhoud",
+    "datum": "2026-02-12",
+    "tijd": "10:03:38",
+    "status": "in behandeling"
+  },
+  {
+    "id": 2,
+    "username": "test",
+    "type": "offerte",
+    "gras": 3,
+    "tegels": 4,
+    "heg": 0,
+    "afval": true,
+    "spoed": false,
+    "prijs": 125,
+    "datum": "2026-02-12",
+    "tijd": "10:03:45",
+    "status": "in behandeling"
+  }
+]
