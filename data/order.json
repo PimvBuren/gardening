@@ -6,7 +6,7 @@
     "pakket": "onderhoud",
     "datum": "2026-02-12",
     "tijd": "10:03:38",
-    "status": "in behandeling"
+    "status": "goedgekeurd"
   },
   {
     "id": 2,
@@ -20,6 +20,15 @@
     "prijs": 125,
     "datum": "2026-02-12",
     "tijd": "10:03:45",
+    "status": "afgewezen"
+  },
+  {
+    "id": 3,
+    "username": "test",
+    "type": "pakket",
+    "pakket": "snoeien",
+    "datum": "2026-02-25",
+    "tijd": "11:14:50",
     "status": "in behandeling"
   }
 ]

@@ -193,6 +193,62 @@ app.post("/bestel-offerte", (req, res) => {
     res.json({ success: true, order: newOrder, prijs: prijs });
 });
 
+
+// ===============================
+// MIJN BESTELLINGEN (KLANT)
+// ===============================
+app.get("/mijn-bestellingen", (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ error: "Niet ingelogd" });
+    }
+
+    const orders = readOrders();
+    const userOrders = orders.filter(o => o.username === req.session.user.username);
+
+    res.json(userOrders);
+});
+
+
+// ===============================
+// ALLE ORDERS (ADMIN)
+// ===============================
+app.get("/admin/orders", (req, res) => {
+    if (!req.session.user || !req.session.user.admin) {
+        return res.status(403).json({ error: "Geen toegang" });
+    }
+
+    const orders = readOrders();
+    res.json(orders);
+});
+
+
+// ===============================
+// UPDATE ORDER STATUS (ADMIN)
+// ===============================
+app.put("/admin/orders/:id", (req, res) => {
+    if (!req.session.user || !req.session.user.admin) {
+        return res.status(403).json({ error: "Geen toegang" });
+    }
+
+    const orderId = parseInt(req.params.id);
+    const { status } = req.body;
+
+    const orders = readOrders();
+    const order = orders.find(o => o.id === orderId);
+
+    if (!order) {
+        return res.json({ error: "Order niet gevonden" });
+    }
+
+    order.status = status;
+    saveOrders(orders);
+
+    res.json({ success: true });
+});
+
+
+
+
 // Start server
 app.listen(3000, () => {
     console.log("Server draait op http://localhost:3000");

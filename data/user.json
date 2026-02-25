@@ -2,6 +2,6 @@
   {
     "username": "test",
     "password": "123",
-    "admin": false
+    "admin": true
   }
-]
+] 
