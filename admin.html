@@ -12,6 +12,20 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
+<header>
+    <h2>Groen & Gewoon Doen</h2>
+    <div id="user-status" style="margin-top: 10px; font-size: 14px;">
+        <span id="login-status"></span>
+        <button id="logout-btn" style="display:none; margin-left: 10px; padding: 5px 10px; cursor:pointer;">Uitloggen</button>
+        <span id="my-orders-link" style="margin-left:10px; display:none;">
+            <a href="mijn-bestellingen.html" style="color:blue; text-decoration:underline;">Mijn bestellingen</a>
+        </span>
+        <span id="admin-link" style="margin-left:10px; display:none;">
+            <button id="go-to-admin" style="padding:5px 10px; cursor:pointer;">Admin Paneel</button>
+        </span>
+    </div>
+</header>
+<hr>
 <body>
 
 <header>
@@ -162,4 +176,45 @@ checkLogin().then(user => {
 
 
 </body>
+<script src="js/auth.js"></script>
+<script>
+async function updateLoginStatus() {
+    const user = await checkLogin();
+    const statusEl = document.getElementById("login-status");
+    const logoutBtn = document.getElementById("logout-btn");
+    const adminLink = document.getElementById("admin-link");
+    const ordersLink = document.getElementById("my-orders-link");
+
+    if(user) {
+        statusEl.textContent = `✓ Ingelogd als: ${user.username}`;
+        statusEl.style.color = "green";
+        logoutBtn.style.display = "inline-block";
+
+        // Admin knop alleen voor admin
+        adminLink.style.display = user.admin ? "inline-block" : "none";
+
+        // Mijn bestellingen voor alle ingelogde gebruikers
+        ordersLink.style.display = "inline-block";
+
+    } else {
+        statusEl.textContent = "";
+        logoutBtn.style.display = "none";
+        adminLink.style.display = "none";
+        ordersLink.style.display = "none";
+    }
+}
+
+// Klik event voor admin knop
+document.getElementById("go-to-admin")?.addEventListener("click", () => {
+    window.location.href = "admin.html";
+});
+
+// Logout functionaliteit
+document.getElementById("logout-btn")?.addEventListener("click", async () => {
+    await logout();
+});
+
+// Update login-status bij laden
+updateLoginStatus();
+</script>
 </html>

@@ -35,13 +35,41 @@
 </head>
 <body>
 
-<header>
+<header style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#eee;">
     <h2>Groen & Gewoon Doen</h2>
-    <div id="user-status" style="margin-top: 10px; font-size: 14px;">
-        <span id="login-status"></span>
-        <button id="logout-btn" style="display:none; margin-left: 10px; padding: 5px 10px; cursor: pointer;">Uitloggen</button>
+
+    <div style="display:flex; align-items:center; gap:10px;">
+        <!-- Login/Uitloggen -->
+        <button id="login-btn" style="padding:5px 10px; cursor:pointer;">Login</button>
+        
+        <span id="user-status" style="display:flex; align-items:center; gap:10px; font-size:14px;">
+            <span id="login-status"></span>
+            <button id="logout-btn" style="display:none; padding:5px 10px; cursor:pointer;">Uitloggen</button>
+            <span id="my-orders-link" style="display:none;">
+                <a href="mijn-bestellingen.html" style="color:blue; text-decoration:underline;">Mijn bestellingen</a>
+            </span>
+            <span id="admin-link" style="display:none;">
+                <button id="go-to-admin" style="padding:5px 10px; cursor:pointer;">Admin Paneel</button>
+            </span>
+        </span>
     </div>
 </header>
+
+    <section>
+        <h3>Standaard Pakketten</h3>
+        <form class="requires-login" id="pakket-form">
+            <label for="pakket">Kies een pakket:</label>
+            <select id="pakket" name="pakket">
+                <option value="">-- Kies een pakket --</option>
+                <option value="onderhoud">Tuin onderhoud</option>
+                <option value="snoeien">Snoeien</option>
+                <option value="aanleg">Tuinaanleg</option>
+            </select>
+            <button type="submit">Bestel</button>
+        </form>
+        <div id="pakket-result" style="margin-top:10px; color:green;"></div>
+    </section>
+
 
 <main>
     <section>
@@ -212,14 +240,29 @@ async function updateLoginStatus() {
     const user = await checkLogin();
     const statusEl = document.getElementById("login-status");
     const logoutBtn = document.getElementById("logout-btn");
-    
+    const adminLink = document.getElementById("admin-link");
+    const ordersLink = document.getElementById("my-orders-link");
+
     if(user) {
         statusEl.textContent = `✓ Ingelogd als: ${user.username}`;
         statusEl.style.color = "green";
         logoutBtn.style.display = "inline-block";
+
+        // Alleen admin ziet de admin knop
+        if(user.admin){
+            adminLink.style.display = "inline-block";
+        } else {
+            adminLink.style.display = "none";
+        }
+
+        // Toon link naar mijn-bestellingen voor alle ingelogde gebruikers
+        ordersLink.style.display = "inline-block";
+
     } else {
         statusEl.textContent = "";
         logoutBtn.style.display = "none";
+        adminLink.style.display = "none";
+        ordersLink.style.display = "none";
     }
 }
 
@@ -287,10 +330,73 @@ async function handleOfferteBestelling(form) {
 
 // Update login status bij laden
 updateLoginStatus();
+document.getElementById("go-to-admin").addEventListener("click", () => {
+    window.location.href = "admin.html";
+});
 </script>
+
 
 <!-- LAAD AUTH.JS MET DE ECHTE FUNCTIES -->
 <script src="js/auth.js"></script>
 
 </body>
+<script>
+const loginBtn = document.getElementById("login-btn");
+const authModal = document.getElementById("auth-modal");
+
+// Open modal als login knop wordt geklikt
+loginBtn.addEventListener("click", () => {
+    authModal.style.display = "flex";
+});
+
+// Update login status (zelfde functie als eerder)
+async function updateLoginStatus() {
+    const user = await checkLogin();
+    const statusEl = document.getElementById("login-status");
+    const logoutBtn = document.getElementById("logout-btn");
+    const adminLink = document.getElementById("admin-link");
+    const ordersLink = document.getElementById("my-orders-link");
+    
+    if(user) {
+        statusEl.textContent = `✓ Ingelogd als: ${user.username}`;
+        statusEl.style.color = "green";
+        logoutBtn.style.display = "inline-block";
+        loginBtn.style.display = "none"; // Login knop verbergen
+
+        // Alleen admin ziet admin knop
+        adminLink.style.display = user.admin ? "inline-block" : "none";
+
+        // Alle ingelogde gebruikers zien “Mijn bestellingen”
+        ordersLink.style.display = "inline-block";
+
+    } else {
+        statusEl.textContent = "";
+        logoutBtn.style.display = "none";
+        loginBtn.style.display = "inline-block"; // Login knop tonen
+        adminLink.style.display = "none";
+        ordersLink.style.display = "none";
+    }
+}
+
+// Logout functionaliteit
+document.getElementById("logout-btn")?.addEventListener("click", async () => {
+    await logout();
+});
+
+// Admin knop event
+document.getElementById("go-to-admin")?.addEventListener("click", () => {
+    window.location.href = "admin.html";
+});
+
+// Modal sluit knop
+document.getElementById("close-modal").addEventListener("click", () => {
+    authModal.style.display = "none";
+});
+
+// Modal login/register submit (bestaande code van jou blijft werken)
+// ...
+
+// Update login status bij laden
+updateLoginStatus();
+</script>
 </html>
