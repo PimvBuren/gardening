@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
+    <link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
     <title>Klantzijde Groen & Gewoon Doen</title>
     <style>
@@ -54,6 +55,20 @@
     </div>
 </header>
 
+    <section>
+        <h3>Standaard Pakketten</h3>
+        <form class="requires-login" id="pakket-form">
+            <label for="pakket">Kies een pakket:</label>
+            <select id="pakket" name="pakket">
+                <option value="">-- Kies een pakket --</option>
+                <option value="onderhoud">Tuin onderhoud</option>
+                <option value="snoeien">Snoeien</option>
+                <option value="aanleg">Tuinaanleg</option>
+            </select>
+            <button type="submit">Bestel</button>
+        </form>
+        <div id="pakket-result" style="margin-top:10px; color:green;"></div>
+    </section>
 
 
 <main>
