@@ -1,0 +1,7 @@
+{
+  "gras_per_m2": 5,
+  "tegels_per_m2": 15,
+  "heg_per_meter": 10,
+  "afval": 50,
+  "spoed_factor": 1.5
+}
