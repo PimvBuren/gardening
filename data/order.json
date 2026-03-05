@@ -53,5 +53,19 @@
     "datum": "2026-03-05",
     "tijd": "09:11:02",
     "status": "goedgekeurd"
+  },
+  {
+    "id": 6,
+    "username": "test",
+    "type": "offerte",
+    "gras": 0,
+    "tegels": 0,
+    "heg": 10,
+    "afval": true,
+    "spoed": false,
+    "prijs": 150,
+    "datum": "2026-03-05",
+    "tijd": "09:47:22",
+    "status": "in behandeling"
   }
 ]
