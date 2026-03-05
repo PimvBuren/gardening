@@ -17,12 +17,12 @@
     "url": "https://github.com/PimvBuren/gardening/issues"
   },
   "homepage": "https://github.com/PimvBuren/gardening#readme",
-  "description": "",
   "dependencies": {
     "express": "^5.2.1",
     "express-session": "^1.19.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"
-  }
+  },
+  "description": ""
 }

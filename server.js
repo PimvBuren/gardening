@@ -19,6 +19,18 @@ app.use(express.static(__dirname));
 const USERS_FILE = path.join(__dirname, "data/user.json");
 const ORDERS_FILE = path.join(__dirname, "data/order.json");
 
+const RATES_FILE = path.join(__dirname, "data/rates.json");
+
+function readRates(){
+    const data = fs.readFileSync(RATES_FILE, "utf-8");
+    return JSON.parse(data);
+}
+
+app.get("/rates", (req,res)=>{
+    const rates = readRates();
+    res.json(rates);
+});
+
 // VERBETERDE FUNCTIE: Handelt lege bestanden en errors af
 function readUsers() { 
     try {
@@ -54,16 +66,17 @@ function saveOrders(orders) {
 
 // Bereken prijs voor custom offerte
 function calculatePrice(gras, tegels, heg, afval, spoed) {
+
+    const rates = readRates();
     let prijs = 0;
-    
-    // Prijzen per eenheid (je kunt deze aanpassen)
-    prijs += gras * 5;      // €5 per m² gras
-    prijs += tegels * 15;   // €15 per m² tegels
-    prijs += heg * 10;      // €10 per meter heg
-    
-    if (afval) prijs += 50;  // €50 voor afval afvoeren
-    if (spoed) prijs *= 1.5; // 50% toeslag voor spoed
-    
+
+    prijs += gras * rates.gras_per_m2;
+    prijs += tegels * rates.tegels_per_m2;
+    prijs += heg * rates.heg_per_meter;
+
+    if (afval) prijs += rates.afval;
+    if (spoed) prijs *= rates.spoed_factor;
+
     return Math.round(prijs);
 }
 
