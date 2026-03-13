@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Mijn Bestellingen</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header>
@@ -95,7 +96,7 @@ async function updateLoginStatus() {
         adminLink.style.display = user.admin ? "inline-block" : "none";
 
         // Mijn bestellingen voor alle ingelogde gebruikers
-        ordersLink.style.display = "inline-block";
+        ordersLink.style.display = "inline-block"
 
     } else {
         statusEl.textContent = "";
