@@ -1,22 +1,17 @@
 <!DOCTYPE html>
 <html lang="nl">
-
-<script src="js/functions.js"></script>
-<script src="js/menu.js"></script>
-<script src="js/admin.js"></script>
-
-
 <head>
     <meta charset="UTF-8">
     <title>Beheerszijde (Admin)</title>
     <link rel="stylesheet" href="style.css">
 </head>
+<body>
 
 <header>
     <h2>Groen & Gewoon Doen</h2>
-    <div id="user-status" style="margin-top: 10px; font-size: 14px;">
+    <div id="user-status" style="margin-top:10px; font-size:14px;">
         <span id="login-status"></span>
-        <button id="logout-btn" style="display:none; margin-left: 10px; padding: 5px 10px; cursor:pointer;">Uitloggen</button>
+        <button id="logout-btn" style="display:none; margin-left:10px; padding:5px 10px; cursor:pointer;">Uitloggen</button>
         <span id="my-orders-link" style="margin-left:10px; display:none;">
             <a href="mijn-bestellingen.html" style="color:blue; text-decoration:underline;">Mijn bestellingen</a>
         </span>
@@ -24,24 +19,15 @@
             <button id="go-to-admin" style="padding:5px 10px; cursor:pointer;">Admin Paneel</button>
         </span>
     </div>
-</header>
-<hr>
-<body>
-
-<header>
-    <h2>Admin – Groen &amp; Gewoon Doen</h2>
 
     <button id="menu-toggle">☰</button>
-
     <nav id="main-nav">
         <a href="index.html">Home</a>
-        <a href="#">Logout</a>
+        <a href="#" id="logout-nav">Logout</a>
     </nav>
 </header>
 
-
 <main>
-
     <section>
         <h1>Beheerszijde (Admin)</h1>
     </section>
@@ -49,7 +35,6 @@
     <!-- Orders -->
     <section>
         <h3>Orders Overzicht</h3>
-
         <table>
             <thead>
                 <tr>
@@ -62,159 +47,39 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>001</td>
-                    <td>Jan Jansen</td>
-                    <td>Tuin renovatie</td>
-                    <td>€1200</td>
-                    <td>Open</td>
-                    <td>
-                        <button>Inplannen</button>
-                        <button>Afwijzen</button>
-                        <button>Afgerond</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>002</td>
-                    <td>Piet de Boer</td>
-                    <td>Gras leggen</td>
-                    <td>€850</td>
-                    <td>Bezig</td>
-                    <td>
-                        <button>Inplannen</button>
-                        <button>Afwijzen</button>
-                        <button>Afgerond</button>
-                    </td>
-                </tr>
+                <!-- Wordt gevuld door admin.js -->
             </tbody>
         </table>
-    </section>
-
-    <hr>
-
-    <!-- Pakketten -->
-    <section>
-        <h3>Pakketten Beheren</h3>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Naam</th>
-                    <th>Prijs</th>
-                    <th>Bewerk</th>
-                    <th>Verwijder</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Basis Tuin</td>
-                    <td>€500</td>
-                    <td><button>Bewerk</button></td>
-                    <td><button>Verwijder</button></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <form>
-            <h4>Nieuw Pakket</h4>
-
-            <label>
-                Naam
-                <input type="text">
-            </label>
-
-            <label>
-                Beschrijving
-                <input type="text">
-            </label>
-
-            <label>
-                Prijs
-                <input type="number">
-            </label>
-
-            <button>Toevoegen</button>
-        </form>
     </section>
 
     <hr>
 
     <!-- Tarieven -->
     <section>
-        <h3>Tarieven Beheren (optioneel)</h3>
-
-        <form>
+        <h3>Tarieven Beheren</h3>
+        <form id="tarieven-form">
             <label>
                 Prijs per m² gras
-                <input type="number">
+                <input type="number" name="gras_per_m2">
             </label>
-
             <label>
                 Prijs per m² tegels
-                <input type="number">
+                <input type="number" name="tegels_per_m2">
             </label>
-
-            <button>Opslaan</button>
+            <button type="submit">Opslaan</button>
         </form>
     </section>
-
 </main>
 
 <footer>
-    © Groen &amp; Gewoon Doen – Admin Paneel
+    © Groen & Gewoon Doen – Admin Paneel
 </footer>
 
-<script>
-checkLogin().then(user => {
-    if (!user || !user.admin) {
-        alert("Geen toegang");
-        window.location.href = "/";
-    }
-});
-</script>
-
-
+<!-- SCRIPTS: auth.js altijd eerst! -->
+<script src="js/auth.js"></script>
+<script src="js/header.js"></script>
+<script src="js/menu.js"></script>
+<script src="js/admin.js"></script>
 
 </body>
-<script src="js/auth.js"></script>
-<script>
-async function updateLoginStatus() {
-    const user = await checkLogin();
-    const statusEl = document.getElementById("login-status");
-    const logoutBtn = document.getElementById("logout-btn");
-    const adminLink = document.getElementById("admin-link");
-    const ordersLink = document.getElementById("my-orders-link");
-
-    if(user) {
-        statusEl.textContent = `✓ Ingelogd als: ${user.username}`;
-        statusEl.style.color = "green";
-        logoutBtn.style.display = "inline-block";
-
-        // Admin knop alleen voor admin
-        adminLink.style.display = user.admin ? "inline-block" : "none";
-
-        // Mijn bestellingen voor alle ingelogde gebruikers
-        ordersLink.style.display = "inline-block";
-
-    } else {
-        statusEl.textContent = "";
-        logoutBtn.style.display = "none";
-        adminLink.style.display = "none";
-        ordersLink.style.display = "none";
-    }
-}
-
-// Klik event voor admin knop
-document.getElementById("go-to-admin")?.addEventListener("click", () => {
-    window.location.href = "admin.html";
-});
-
-// Logout functionaliteit
-document.getElementById("logout-btn")?.addEventListener("click", async () => {
-    await logout();
-});
-
-// Update login-status bij laden
-updateLoginStatus();
-</script>
 </html>

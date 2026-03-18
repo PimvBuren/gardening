@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
     <title>Klantzijde Groen & Gewoon Doen</title>
+    <link rel="stylesheet" href="style.css">
     <style>
         body { font-family: Arial, sans-serif; margin:0; padding:0; }
         header, footer { background:#eee; padding:10px; text-align:center; }
         main { padding:20px; }
         hr { margin:20px 0; }
 
-        /* MODAL STYLES */
         #auth-modal {
             display:none;
             position:fixed;
@@ -39,9 +38,8 @@
     <h2>Groen & Gewoon Doen</h2>
 
     <div style="display:flex; align-items:center; gap:10px;">
-        <!-- Login/Uitloggen -->
         <button id="login-btn" style="padding:5px 10px; cursor:pointer;">Login</button>
-        
+
         <span id="user-status" style="display:flex; align-items:center; gap:10px; font-size:14px;">
             <span id="login-status"></span>
             <button id="logout-btn" style="display:none; padding:5px 10px; cursor:pointer;">Uitloggen</button>
@@ -54,22 +52,6 @@
         </span>
     </div>
 </header>
-
-    <section>
-        <h3>Standaard Pakketten</h3>
-        <form class="requires-login" id="pakket-form">
-            <label for="pakket">Kies een pakket:</label>
-            <select id="pakket" name="pakket">
-                <option value="">-- Kies een pakket --</option>
-                <option value="onderhoud">Tuin onderhoud</option>
-                <option value="snoeien">Snoeien</option>
-                <option value="aanleg">Tuinaanleg</option>
-            </select>
-            <button type="submit">Bestel</button>
-        </form>
-        <div id="pakket-result" style="margin-top:10px; color:green;"></div>
-    </section>
-
 
 <main>
     <section>
@@ -151,292 +133,10 @@
     </div>
 </div>
 
-<script>
-const modal = document.getElementById("auth-modal");
-const closeModal = document.getElementById("close-modal");
-const toggleRegister = document.getElementById("toggle-register");
-const modalTitle = document.getElementById("modal-title");
-const authSubmit = document.getElementById("auth-submit");
-const authUsername = document.getElementById("auth-username");
-const authPassword = document.getElementById("auth-password");
-const authError = document.getElementById("auth-error");
-
-let registerMode = false;
-let pendingForm = null;
-
-/* =========================
-   RATES + QUOTE FUNCTIONS
-========================= */
-
-async function loadRates(){
-    const res = await fetch("/rates");
-    return await res.json();
-}
-
-function calculateQuote(rates, gras, tegels, heg, afval, spoed){
-
-    let prijs = 0;
-
-    prijs += gras * rates.gras_per_m2;
-    prijs += tegels * rates.tegels_per_m2;
-    prijs += heg * rates.heg_per_meter;
-
-    if(afval) prijs += rates.afval;
-    if(spoed) prijs *= rates.spoed_factor;
-
-    return Math.round(prijs);
-}
-
-/* =========================
-   LOGIN / REGISTER MODAL
-========================= */
-
-// Open / Close modal
-function openAuthModal() { modal.style.display = "flex"; }
-closeModal.onclick = () => modal.style.display = "none";
-
-// Toggle login/register
-toggleRegister.onclick = () => {
-    registerMode = !registerMode;
-    modalTitle.textContent = registerMode ? "Register" : "Login";
-    authSubmit.textContent = registerMode ? "Register" : "Login";
-    toggleRegister.textContent = registerMode ? "Al een account? Login" : "Geen account? Register";
-    authError.textContent = "";
-}
-
-// Submit login/register
-authSubmit.onclick = async () => {
-    const username = authUsername.value.trim();
-    const password = authPassword.value.trim();
-    if(!username || !password){ authError.textContent="Vul beide velden in!"; return; }
-
-    let res;
-    try {
-        if(registerMode) res = await register(username,password);
-        else res = await login(username,password);
-    } catch(e){
-        console.error("Auth error:", e);
-        authError.textContent="Server error!";
-        return;
-    }
-
-    if(res.error) authError.textContent = res.error;
-    else {
-        modal.style.display = "none";
-        authError.textContent = "";
-        authUsername.value = "";
-        authPassword.value = "";
-        
-        // Update login status
-        await updateLoginStatus();
-        
-        if(pendingForm){
-            // Verwerk de pending form
-            if(pendingForm.id === "pakket-form") {
-                await handlePakketBestelling(pendingForm);
-            } else if(pendingForm.id === "offerte-form") {
-                await handleOfferteBestelling(pendingForm);
-            }
-            pendingForm = null;
-        }
-    }
-}
-
-// Intercepteer form submits
-document.querySelectorAll("form.requires-login").forEach(form => {
-    form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const user = await checkLogin();
-        if(!user){
-            pendingForm = form;
-            openAuthModal();
-            return;
-        }
-        
-        // Als ingelogd, verwerk de bestelling
-        if(form.id === "pakket-form") {
-            await handlePakketBestelling(form);
-        } else if(form.id === "offerte-form") {
-            await handleOfferteBestelling(form);
-        }
-    });
-});
-
-// Check login status bij laden pagina
-async function updateLoginStatus() {
-    const user = await checkLogin();
-    const statusEl = document.getElementById("login-status");
-    const logoutBtn = document.getElementById("logout-btn");
-    const adminLink = document.getElementById("admin-link");
-    const ordersLink = document.getElementById("my-orders-link");
-
-    if(user) {
-        statusEl.textContent = `✓ Ingelogd als: ${user.username}`;
-        statusEl.style.color = "green";
-        logoutBtn.style.display = "inline-block";
-
-        // Alleen admin ziet de admin knop
-        if(user.admin){
-            adminLink.style.display = "inline-block";
-        } else {
-            adminLink.style.display = "none";
-        }
-
-        // Toon link naar mijn-bestellingen voor alle ingelogde gebruikers
-        ordersLink.style.display = "inline-block";
-
-    } else {
-        statusEl.textContent = "";
-        logoutBtn.style.display = "none";
-        adminLink.style.display = "none";
-        ordersLink.style.display = "none";
-    }
-}
-
-// Logout functionaliteit
-document.getElementById("logout-btn").addEventListener("click", async () => {
-    await logout();
-});
-
-// Handle pakket bestelling
-async function handlePakketBestelling(form) {
-    const pakket = form.querySelector('[name="pakket"]').value;
-    if(!pakket) {
-        alert("Selecteer eerst een pakket!");
-        return;
-    }
-    
-    const res = await fetch("/bestel-pakket", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ pakket })
-    });
-    
-    const data = await res.json();
-    const resultEl = document.getElementById("pakket-result");
-    
-    if(data.error) {
-        resultEl.textContent = "Error: " + data.error;
-        resultEl.style.color = "red";
-    } else {
-        resultEl.textContent = `✓ Bestelling geplaatst! Pakket: ${data.order.pakket}`;
-        resultEl.style.color = "green";
-        form.reset();
-    }
-}
-
-// Handle offerte bestelling
-async function handleOfferteBestelling(form) {
-
-    const formData = new FormData(form);
-
-    const gras = parseInt(formData.get("gras")) || 0;
-    const tegels = parseInt(formData.get("tegels")) || 0;
-    const heg = parseInt(formData.get("heg")) || 0;
-
-    const afval = formData.get("afval") === "on";
-    const spoed = formData.get("spoed") === "on";
-
-    const rates = await loadRates();
-    const prijs = calculateQuote(rates, gras, tegels, heg, afval, spoed);
-
-    const res = await fetch("/bestel-offerte", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            gras,
-            tegels,
-            heg,
-            afval,
-            spoed
-        })
-    });
-
-    const result = await res.json();
-    const resultEl = document.getElementById("offerte-result");
-
-    if(result.error){
-        resultEl.textContent = "Error: " + result.error;
-        resultEl.style.color = "red";
-    } else {
-        resultEl.innerHTML = `
-            ✓ Offerte aangevraagd!<br>
-            Geschatte prijs: €${prijs}
-        `;
-        resultEl.style.color = "green";
-        form.reset();
-    }
-}
-
-// Update login status bij laden
-updateLoginStatus();
-document.getElementById("go-to-admin").addEventListener("click", () => {
-    window.location.href = "admin.html";
-});
-</script>
-
-
-<!-- LAAD AUTH.JS MET DE ECHTE FUNCTIES -->
+<!-- SCRIPTS: auth.js altijd eerst! -->
 <script src="js/auth.js"></script>
+<script src="js/header.js"></script>
+<script src="js/index.js"></script>
 
 </body>
-<script>
-const loginBtn = document.getElementById("login-btn");
-const authModal = document.getElementById("auth-modal");
-
-// Open modal als login knop wordt geklikt
-loginBtn.addEventListener("click", () => {
-    authModal.style.display = "flex";
-});
-
-// Update login status (zelfde functie als eerder)
-async function updateLoginStatus() {
-    const user = await checkLogin();
-    const statusEl = document.getElementById("login-status");
-    const logoutBtn = document.getElementById("logout-btn");
-    const adminLink = document.getElementById("admin-link");
-    const ordersLink = document.getElementById("my-orders-link");
-    
-    if(user) {
-        statusEl.textContent = `✓ Ingelogd als: ${user.username}`;
-        statusEl.style.color = "green";
-        logoutBtn.style.display = "inline-block";
-        loginBtn.style.display = "none"; // Login knop verbergen
-
-        // Alleen admin ziet admin knop
-        adminLink.style.display = user.admin ? "inline-block" : "none";
-
-        // Alle ingelogde gebruikers zien “Mijn bestellingen”
-        ordersLink.style.display = "inline-block";
-
-    } else {
-        statusEl.textContent = "";
-        logoutBtn.style.display = "none";
-        loginBtn.style.display = "inline-block"; // Login knop tonen
-        adminLink.style.display = "none";
-        ordersLink.style.display = "none";
-    }
-}
-
-// Logout functionaliteit
-document.getElementById("logout-btn")?.addEventListener("click", async () => {
-    await logout();
-});
-
-// Admin knop event
-document.getElementById("go-to-admin")?.addEventListener("click", () => {
-    window.location.href = "admin.html";
-});
-
-// Modal sluit knop
-document.getElementById("close-modal").addEventListener("click", () => {
-    authModal.style.display = "none";
-});
-
-// Modal login/register submit (bestaande code van jou blijft werken)
-// ...
-
-// Update login status bij laden
-updateLoginStatus();
-</script>
 </html>
