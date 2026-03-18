@@ -67,5 +67,42 @@
     "datum": "2026-03-05",
     "tijd": "09:47:22",
     "status": "in behandeling"
+  },
+  {
+    "id": 7,
+    "username": "test",
+    "type": "offerte",
+    "gras": 1,
+    "tegels": 1,
+    "heg": 1,
+    "afval": true,
+    "spoed": false,
+    "prijs": 80,
+    "datum": "2026-03-05",
+    "tijd": "09:53:16",
+    "status": "goedgekeurd"
+  },
+  {
+    "id": 8,
+    "username": "test",
+    "type": "offerte",
+    "gras": 2,
+    "tegels": 0,
+    "heg": 3,
+    "afval": true,
+    "spoed": false,
+    "prijs": 90,
+    "datum": "2026-03-09",
+    "tijd": "09:14:04",
+    "status": "afgewezen"
+  },
+  {
+    "id": 9,
+    "username": "test",
+    "type": "pakket",
+    "pakket": "onderhoud",
+    "datum": "2026-03-18",
+    "tijd": "10:53:29",
+    "status": "afgewezen"
   }
 ]
