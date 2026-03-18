@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="nl">
+
 <head>
     <meta charset="UTF-8">
     <title>Klantzijde Groen & Gewoon Doen</title>
@@ -32,10 +33,12 @@
         #toggle-register { cursor:pointer; color:blue; }
     </style>
 </head>
+
 <body>
 
-<header style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#eee;">
-    <h2>Groen & Gewoon Doen</h2>
+    <!-- HEADER -->
+    <header>
+        <h2>Groen & Gewoon Doen</h2>
 
     <div style="display:flex; align-items:center; gap:10px;">
         <button id="login-btn" style="padding:5px 10px; cursor:pointer;">Login</button>
@@ -47,7 +50,7 @@
                 <a href="mijn-bestellingen.html" style="color:blue; text-decoration:underline;">Mijn bestellingen</a>
             </span>
             <span id="admin-link" style="display:none;">
-                <button id="go-to-admin" style="padding:5px 10px; cursor:pointer;">Admin Paneel</button>
+                <a href="admin.html">Admin</a>
             </span>
         </span>
     </div>
@@ -86,50 +89,88 @@
                 <input type="number" name="gras" min="0" value="0">
             </label><br><br>
 
-            <label>
-                m² Tegels:
-                <input type="number" name="tegels" min="0" value="0">
-            </label><br><br>
+        <div id="user-status">
+            <button id="login-btn">Login</button>
+            <span id="login-status"></span>
+            <button id="logout-btn" style="display:none;">Uitloggen</button>
+        </div>
+    </header>
 
-            <label>
-                Meters Heg:
-                <input type="number" name="heg" min="0" value="0">
-            </label><br><br>
+    <!-- MAIN CONTENT -->
+    <main>
+        <section>
+            <h1>Welkom!</h1>
+            <p>Bestel uw tuinservice eenvoudig online!</p>
+        </section>
 
-            <label>
-                <input type="checkbox" name="afval"> Afval afvoeren (+€50)
-            </label><br>
+        <hr>
 
-            <label>
-                <input type="checkbox" name="spoed"> Spoedservice (+50%)
-            </label><br><br>
+        <section>
+            <h3>Standaard Pakketten</h3>
+            <form class="requires-login" id="pakket-form">
+                <label for="pakket">Kies een pakket:</label>
+                <select id="pakket" name="pakket">
+                    <option value="">-- Kies een pakket --</option>
+                    <option value="onderhoud">Tuin onderhoud</option>
+                    <option value="snoeien">Snoeien</option>
+                    <option value="aanleg">Tuinaanleg</option>
+                </select>
+                <button type="submit">Bestel</button>
+            </form>
+            <div id="pakket-result"></div>
+        </section>
 
-            <button type="submit">Bereken offerte</button>
-        </form>
-        <div id="offerte-result" style="margin-top:10px; color:green;"></div>
-    </section>
-</main>
+        <hr>
 
-<footer>
-    <p>
-        <a href="#">Contact</a> |
-        <a href="#">Social Media</a> |
-        <a href="#">Disclaimer</a>
-    </p>
-</footer>
+        <section>
+            <h3>Custom Offerte</h3>
+            <form class="requires-login" id="offerte-form">
+                <label>
+                    m² Gras:
+                    <input type="number" name="gras" min="0" value="0">
+                </label>
+                <label>
+                    m² Tegels:
+                    <input type="number" name="tegels" min="0" value="0">
+                </label>
+                <label>
+                    Meters Heg:
+                    <input type="number" name="heg" min="0" value="0">
+                </label>
+                <label>
+                    <input type="checkbox" name="afval"> Afval afvoeren (+€50)
+                </label>
+                <label>
+                    <input type="checkbox" name="spoed"> Spoedservice (+50%)
+                </label>
+                <button type="submit">Bereken offerte</button>
+            </form>
+            <div id="offerte-result"></div>
+        </section>
+    </main>
 
-<!-- LOGIN / REGISTER MODAL -->
-<div id="auth-modal">
-    <div class="modal-content">
-        <span id="close-modal">✖</span>
-        <h3 id="modal-title">Login</h3>
-        <input type="text" id="auth-username" placeholder="Username">
-        <input type="password" id="auth-password" placeholder="Password">
-        <div id="auth-error"></div>
-        <button id="auth-submit">Login</button>
-        <p style="text-align:center;">
-            <span id="toggle-register">Geen account? Register</span>
+    <!-- FOOTER -->
+    <footer>
+        <p>
+            <a href="#">Contact</a> |
+            <a href="#">Social Media</a> |
+            <a href="#">Disclaimer</a>
         </p>
+    </footer>
+
+    <!-- LOGIN / REGISTER MODAL -->
+    <div id="auth-modal">
+        <div class="modal-content">
+            <span id="close-modal">✖</span>
+            <h3 id="modal-title">Login</h3>
+            <input type="text" id="auth-username" placeholder="Username">
+            <input type="password" id="auth-password" placeholder="Password">
+            <div id="auth-error"></div>
+            <button id="auth-submit">Login</button>
+            <p style="text-align:center;">
+                <span id="toggle-register">Geen account? Register</span>
+            </p>
+        </div>
     </div>
 </div>
 
