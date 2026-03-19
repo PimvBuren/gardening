@@ -1,85 +1,86 @@
 <!DOCTYPE html>
 <html lang="nl">
+
 <head>
     <meta charset="UTF-8">
     <title>Beheerszijde (Admin)</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<header>
-    <h2>Groen & Gewoon Doen</h2>
-    <div id="user-status" style="margin-top:10px; font-size:14px;">
-        <span id="login-status"></span>
-        <button id="logout-btn" style="display:none; margin-left:10px; padding:5px 10px; cursor:pointer;">Uitloggen</button>
-        <span id="my-orders-link" style="margin-left:10px; display:none;">
-            <a href="mijn-bestellingen.html" style="color:blue; text-decoration:underline;">Mijn bestellingen</a>
-        </span>
-        <span id="admin-link" style="margin-left:10px; display:none;">
-            <button id="go-to-admin" style="padding:5px 10px; cursor:pointer;">Admin Paneel</button>
-        </span>
-    </div>
+    <header>
+        <h2>Groen & Gewoon Doen</h2>
 
-    <button id="menu-toggle">☰</button>
-    <nav id="main-nav">
-        <a href="index.html">Home</a>
-        <a href="#" id="logout-nav">Logout</a>
-    </nav>
-</header>
+        <div id="user-status">
+            <span id="login-status"></span>
+            <button id="logout-btn" style="display:none;">Uitloggen</button>
+            <span id="my-orders-link" style="display:none;">
+                <a href="mijn-bestellingen.html">Mijn bestellingen</a>
+            </span>
+            <span id="admin-link" style="display:none;">
+                <button id="go-to-admin">Admin Paneel</button>
+            </span>
+        </div>
 
-<main>
-    <section>
-        <h1>Beheerszijde (Admin)</h1>
-    </section>
+        <button id="menu-toggle">☰</button>
+        <nav id="main-nav">
+            <a href="index.html">Home</a>
+            <a href="#" id="logout-nav">Logout</a>
+        </nav>
+    </header>
 
-    <!-- Orders -->
-    <section>
-        <h3>Orders Overzicht</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Order ID</th>
-                    <th>Klant</th>
-                    <th>Details</th>
-                    <th>Offerte</th>
-                    <th>Status</th>
-                    <th>Acties</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Wordt gevuld door admin.js -->
-            </tbody>
-        </table>
-    </section>
+    <main>
+        <section>
+            <h1>Beheerszijde (Admin)</h1>
+        </section>
 
-    <hr>
+        <section>
+            <h3>Orders Overzicht</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Klant</th>
+                        <th>Details</th>
+                        <th>Offerte</th>
+                        <th>Status</th>
+                        <th>Acties</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Wordt gevuld door admin.js -->
+                </tbody>
+            </table>
+        </section>
 
-    <!-- Tarieven -->
-    <section>
-        <h3>Tarieven Beheren</h3>
-        <form id="tarieven-form">
-            <label>
-                Prijs per m² gras
-                <input type="number" name="gras_per_m2">
-            </label>
-            <label>
-                Prijs per m² tegels
-                <input type="number" name="tegels_per_m2">
-            </label>
-            <button type="submit">Opslaan</button>
-        </form>
-    </section>
-</main>
+        <hr>
 
-<footer>
-    © Groen & Gewoon Doen – Admin Paneel
-</footer>
+        <section>
+            <h3>Tarieven Beheren</h3>
+            <form id="tarieven-form">
+                <label>
+                    Prijs per m² gras
+                    <input type="number" name="gras_per_m2">
+                </label>
+                <label>
+                    Prijs per m² tegels
+                    <input type="number" name="tegels_per_m2">
+                </label>
+                <button type="submit">Opslaan</button>
+            </form>
+        </section>
+    </main>
 
-<!-- SCRIPTS: auth.js altijd eerst! -->
-<script src="js/auth.js"></script>
-<script src="js/header.js"></script>
-<script src="js/menu.js"></script>
-<script src="js/admin.js"></script>
+    <footer>
+        © Groen & Gewoon Doen – Admin Paneel
+    </footer>
+
+    <script src="js/auth.js"></script>
+    <script src="js/header.js"></script>
+    <script src="js/menu.js"></script>
+    <script src="js/admin.js"></script>
 
 </body>
+
 </html>
