@@ -97,12 +97,15 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+<<<<<<< main
+=======
     gap: 16px;
     flex-wrap: wrap;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
     position: sticky;
     top: 0;
     z-index: 100;
+>>>>>>> main
 }
 
 header h2 {
@@ -130,48 +133,9 @@ nav#main-nav a {
     transition: color var(--transition), border-color var(--transition);
 }
 
-nav#main-nav a:hover {
-    color: var(--white);
-    border-bottom-color: var(--green-light);
-}
-
-/* ── User Status Bar ── */
-#user-status {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 0.88rem;
-    color: var(--green-light);
-}
-
-#login-status {
-    color: var(--green-light);
-    font-weight: 500;
-}
-
-/* ── Buttons ── */
-button,
-input[type="submit"] {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.92rem;
-    font-weight: 500;
-    cursor: pointer;
-    border: none;
-    border-radius: var(--radius);
-    transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
-}
-
-/* Primary button */
-button {
-    background: var(--green-mid);
-    color: var(--white);
-    padding: 8px 18px;
-}
-
-button:hover {
-    background: var(--green-deep);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-sm);
+header nav a:hover {
+    color: #c8e6c9;
+ 
 }
 
 button:active {
@@ -272,47 +236,22 @@ label {
     gap: 5px;
 }
 
-input[type="text"],
-input[type="password"],
 input[type="number"],
-select {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.93rem;
-    padding: 9px 13px;
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--cream);
-    color: var(--text-dark);
+select,
+input[type="text"],
+input[type="email"],
+input[type="password"] {
     width: 100%;
-    transition: border-color var(--transition), box-shadow var(--transition);
-    outline: none;
-    -moz-appearance: textfield;
-}
-
-input[type="text"]:focus,
-input[type="password"]:focus,
-input[type="number"]:focus,
-select:focus {
-    border-color: var(--green-mid);
-    box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.12);
-    background: var(--white);
-}
-
-/* Checkbox labels (inline) */
-label:has(input[type="checkbox"]) {
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-    font-weight: 400;
-    cursor: pointer;
+    padding: 10px;
+    border: 1px solid #c5d6c5;
+    border-radius: 6px;
+    background-color: #f9fdf8;
+    margin-top: 5px;
 }
 
 input[type="checkbox"] {
-    width: 17px;
-    height: 17px;
-    accent-color: var(--green-mid);
-    cursor: pointer;
-    flex-shrink: 0;
+    width: auto;
+    margin-right: 6px;
 }
 
 form button[type="submit"],
@@ -322,40 +261,15 @@ form button {
     color: var(--white);
     padding: 10px 26px;
     border: none;
-    font-size: 0.95rem;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
 }
 
-form button[type="submit"]:hover,
-form button:hover {
-    background: var(--green-mid);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-sm);
-}
-
-/* ── Result / Feedback Messages ── */
-#pakket-result,
-#offerte-result {
-    margin-top: 12px;
-    padding: 10px 16px;
-    border-radius: var(--radius);
-    font-size: 0.92rem;
-    font-weight: 500;
-    background: var(--green-pale);
-    color: var(--success);
-    border-left: 4px solid var(--green-mid);
-    display: none;
-}
-
-#pakket-result:not(:empty),
-#offerte-result:not(:empty) {
-    display: block;
-}
-
-/* ── Orders List (bestellingen page) ── */
-#orders {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+button:hover {
+    background-color: #2e7d32;
+    
 }
 
 /* ── Table (admin) ── */
@@ -384,8 +298,12 @@ tbody tr {
     transition: background var(--transition);
 }
 
-tbody tr:last-child {
-    border-bottom: none;
+
+footer {
+    text-align: center;
+    font-size: 12px;
+    color: #555;
+    margin: 20px 0;
 }
 
 tbody tr:hover {
@@ -417,177 +335,28 @@ hr {
     margin: 8px 0 24px;
 }
 
-/* ── Auth Modal ── */
-#auth-modal {
+
+#menu-toggle {
     display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(20, 35, 20, 0.65);
-    backdrop-filter: blur(4px);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    animation: fadeIn 0.18s ease;
+    font-size: 22px;
+    background: none;
+    border: none;
+    color: white;
 }
 
-#auth-modal.open {
-    display: flex;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-#auth-modal .modal-content {
-    background: var(--white);
-    padding: 36px 32px 28px;
-    border-radius: var(--radius-lg);
-    width: 340px;
-    position: relative;
-    box-shadow: var(--shadow-md);
-    animation: slideUp 0.22s ease;
-}
-
-@keyframes slideUp {
-    from {
-        transform: translateY(24px);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-#auth-modal h3 {
-    margin-bottom: 20px;
-}
-
-#close-modal {
-    position: absolute;
-    top: 14px;
-    right: 18px;
-    cursor: pointer;
-    font-size: 1.1rem;
-    color: var(--text-muted);
-    line-height: 1;
-    padding: 2px 6px;
-    border-radius: 4px;
-    transition: background var(--transition), color var(--transition);
-}
-
-#close-modal:hover {
-    background: var(--green-pale);
-    color: var(--green-deep);
-}
-
-#auth-modal input {
-    margin-bottom: 12px;
-}
-
-#auth-modal button {
-    width: 100%;
-    padding: 11px;
-    background: var(--green-deep);
-    color: var(--white);
-    font-size: 0.97rem;
-    border-radius: var(--radius);
-    margin-top: 4px;
-}
-
-#auth-modal button:hover {
-    background: var(--green-mid);
-}
-
-#auth-error {
-    color: var(--error);
-    font-size: 0.86rem;
-    margin-bottom: 10px;
-    min-height: 1.1em;
-}
-
-#toggle-register {
-    cursor: pointer;
-    color: var(--green-mid);
-    font-size: 0.88rem;
-    display: block;
-    text-align: center;
-    margin-top: 14px;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    transition: color var(--transition);
-}
-
-#toggle-register:hover {
-    color: var(--green-deep);
-}
-
-/* ── Back Link ── */
-a[href="index.html"] {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    text-decoration: none;
-    color: var(--green-mid);
-    margin-bottom: 8px;
-    transition: color var(--transition), gap var(--transition);
-}
-
-a[href="index.html"]:hover {
-    color: var(--green-deep);
-    gap: 10px;
-}
-
-/* ── Footer ── */
-footer {
-    background: var(--green-deep);
-    color: var(--green-light);
-    text-align: center;
-    padding: 18px 20px;
-    font-size: 0.85rem;
-    letter-spacing: 0.2px;
-}
-
-footer a {
-    color: var(--green-light);
-    text-decoration: none;
-    margin: 0 6px;
-    transition: color var(--transition);
-}
-
-footer a:hover {
-    color: var(--white);
-}
-
-/* ── Responsive ── */
 @media (max-width: 600px) {
-    header {
-        padding: 12px 18px;
+    #menu-toggle {
+        display: block;
     }
 
-    main {
-        padding: 24px 16px 36px;
+    #main-nav {
+        display: none;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 10px;
     }
 
-    section {
-        padding: 20px 18px;
-    }
-
-    #tarieven-form {
-        grid-template-columns: 1fr;
-    }
-
-    #auth-modal .modal-content {
-        width: 92vw;
-        padding: 28px 20px 22px;
+    #main-nav.active {
+        display: flex;
     }
 }
