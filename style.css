@@ -1,3 +1,6 @@
+/* ===============================
+   ALGEMENE STYLING
+=============================== */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -5,98 +8,81 @@
 }
 
 body {
-    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
-    background-color: #f4f8f2;
-    color: #2f3e2f;
-    line-height: 1.6;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f2f2f2;
+    color: #333;
+    line-height: 1.5;
 }
-
 
 header {
     background-color: #2e7d32;
+    /* groene hovenier kleur */
     color: white;
-    padding: 15px 25px;
+    padding: 15px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
 }
 
 header h2 {
     font-size: 20px;
-    letter-spacing: 1px;
 }
 
 header nav a {
     text-decoration: none;
     color: white;
-    font-weight: 600;
-    margin-left: 15px;
-    transition: 0.3s;
+    margin-right: 15px;
+    font-weight: bold;
 }
 
 header nav a:hover {
     color: #c8e6c9;
+ 
 }
 
-#login-status {
-    color: #c8e6c9;
-    font-size: 13px;
+#user-status button:hover {
+    background-color: #81c784;
 }
-
-#my-orders-link a {
-    color: white;
-    text-decoration: underline;
-    font-size: 13px;
-}
-
 
 main {
     max-width: 900px;
-    margin: 40px auto;
+    margin: 20px auto;
     background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    padding: 30px;
+    border: 2px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
 }
 
-
 section {
-    margin-bottom: 35px;
+    margin-bottom: 25px;
 }
 
 section h1,
 section h3 {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     color: #2e7d32;
 }
 
-
 form {
-    margin-top: 15px;
+    margin-top: 10px;
 }
 
 label {
     display: block;
-    margin-bottom: 10px;
-    font-weight: 500;
+    margin-bottom: 8px;
 }
 
 input[type="number"],
-input[type="date"],
+select,
 input[type="text"],
 input[type="email"],
-input[type="password"],
-select {
+input[type="password"] {
     width: 100%;
     padding: 10px;
     border: 1px solid #c5d6c5;
     border-radius: 6px;
     background-color: #f9fdf8;
     margin-top: 5px;
-    font-family: inherit;
-    font-size: 14px;
 }
 
 input[type="checkbox"] {
@@ -104,76 +90,44 @@ input[type="checkbox"] {
     margin-right: 6px;
 }
 
-
 button {
-    background-color: #43a047;
-    color: white;
+    background-color: #2e7d32;
     border: none;
-    padding: 10px 18px;
-    border-radius: 6px;
+    padding: 8px 15px;
     cursor: pointer;
     font-size: 14px;
-    font-family: inherit;
     transition: 0.3s;
 }
 
 button:hover {
     background-color: #2e7d32;
+    
 }
-
-/* Header knoppen */
-#login-btn,
-#logout-btn {
-    background-color: rgba(255,255,255,0.2);
-    border: 1px solid rgba(255,255,255,0.4);
-    color: white;
-    padding: 5px 12px;
-    font-size: 13px;
-}
-#login-btn:hover,
-#logout-btn:hover {
-    background-color: rgba(255,255,255,0.35);
-}
-
-#go-to-admin {
-    background-color: #ff8f00;
-    padding: 5px 12px;
-    font-size: 13px;
-}
-#go-to-admin:hover {
-    background-color: #e65100;
-}
-
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 15px;
+    margin-top: 10px;
 }
 
 table th,
 table td {
-    border: 1px solid #d0e2d0;
-    padding: 10px;
+    border: 1px solid #999;
+    padding: 8px;
     font-size: 14px;
     text-align: left;
 }
 
 table th {
-    background-color: #e8f5e9;
-    color: #2e7d32;
-}
-
-tbody tr:hover {
-    background-color: #f1f8f1;
+    background-color: #a5d6a7;
 }
 
 
 footer {
     text-align: center;
-    font-size: 13px;
-    color: #2f3e2f;
-    margin: 30px 0;
+    font-size: 12px;
+    color: #555;
+    margin: 20px 0;
 }
 
 footer a {
@@ -185,172 +139,34 @@ footer a:hover {
     text-decoration: underline;
 }
 
-
 hr {
-    margin: 25px 0;
-    border: none;
-    height: 1px;
-    background-color: #d0e2d0;
+    margin: 20px 0;
+    border: 1px solid #ccc;
+    border-radius: 2px;
 }
 
 
-/* Pakket kaarten */
-.pakket-kaarten {
-    display: flex;
-    gap: 14px;
-    flex-wrap: wrap;
-    margin-bottom: 18px;
-}
-
-.pakket-kaart {
-    border: 2px solid #c5d6c5;
-    border-radius: 8px;
-    padding: 14px;
-    width: 190px;
-    cursor: pointer;
-    transition: 0.2s;
-    background: #f9fdf8;
-}
-
-.pakket-kaart:hover {
-    border-color: #43a047;
-    background: #e8f5e9;
-}
-
-.pakket-kaart.geselecteerd {
-    border-color: #2e7d32;
-    background: #c8e6c9;
-}
-
-.pakket-kaart h4 {
-    color: #2e7d32;
-    margin-bottom: 8px;
-    font-size: 15px;
-}
-
-.pakket-kaart ul {
-    font-size: 13px;
-    padding-left: 16px;
-    margin: 0 0 8px 0;
-    color: #4a644a;
-}
-
-.pakket-kaart .pakket-duur {
-    font-size: 12px;
-    color: #777;
-    font-style: italic;
-    border-top: 1px solid #d0e2d0;
-    padding-top: 6px;
-    margin-top: 4px;
-}
-
-#pakket-keuze-label {
-    font-size: 14px;
-    font-weight: 600;
-    color: #2e7d32;
-    min-height: 20px;
-    margin-bottom: 8px;
-}
-
-
-/* Datum sectie */
-.datum-sectie {
-    margin-top: 12px;
-    padding: 12px;
-    background: #f1f8f1;
-    border: 1px solid #c5d6c5;
-    border-radius: 6px;
-}
-
-.datum-sectie label {
-    font-weight: 600;
-    font-size: 13px;
-    color: #2e7d32;
-}
-
-#pakket-datum,
-#offerte-datum {
-    max-width: 200px;
-}
-
-
-/* Auth modal */
-#auth-modal {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.6);
-    justify-content: center;
-    align-items: center;
-    z-index: 200;
-}
-
-#auth-modal .modal-content {
-    background: #fff;
-    padding: 24px;
-    border-radius: 8px;
-    width: 300px;
-    position: relative;
-}
-
-#close-modal {
-    position: absolute;
-    top: 10px; right: 15px;
-    cursor: pointer;
-    font-size: 18px;
-    color: #666;
-}
-
-#auth-error {
-    color: red;
-    font-size: 13px;
-    margin-bottom: 10px;
-    min-height: 18px;
-}
-
-#auth-modal input {
-    margin-bottom: 10px;
-}
-
-#auth-modal button {
-    width: 100%;
-    padding: 8px;
-}
-
-#toggle-register {
-    cursor: pointer;
-    color: #43a047;
-    font-size: 13px;
-    text-decoration: underline;
-}
-
-
-/* Menu toggle mobiel */
 #menu-toggle {
     display: none;
     font-size: 22px;
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.3);
+    background: none;
+    border: none;
     color: white;
-    padding: 4px 10px;
 }
 
 @media (max-width: 600px) {
-    main { padding: 20px 14px; }
-
-    #menu-toggle { display: block; }
+    #menu-toggle {
+        display: block;
+    }
 
     #main-nav {
         display: none;
         flex-direction: column;
-        gap: 10px;
-        width: 100%;
-        margin-top: 8px;
+        gap: 12px;
+        margin-top: 10px;
     }
 
-    #main-nav.active { display: flex; }
-
-    .pakket-kaarten { flex-direction: column; }
-    .pakket-kaart { width: 100%; }
+    #main-nav.active {
+        display: flex;
+    }
 }

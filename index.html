@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="nl">
+
 <head>
     <meta charset="UTF-8">
     <title>Klantzijde Groen & Gewoon Doen</title>
@@ -106,10 +107,12 @@
         }
     </style>
 </head>
+
 <body>
 
-<header style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#eee;">
-    <h2>Groen & Gewoon Doen</h2>
+    <!-- HEADER -->
+    <header>
+        <h2>Groen & Gewoon Doen</h2>
 
     <div style="display:flex; align-items:center; gap:10px;">
         <button id="login-btn" style="padding:5px 10px; cursor:pointer;">Login</button>
@@ -121,7 +124,7 @@
                 <a href="mijn-bestellingen.html" style="color:blue; text-decoration:underline;">Mijn bestellingen</a>
             </span>
             <span id="admin-link" style="display:none;">
-                <button id="go-to-admin" style="padding:5px 10px; cursor:pointer;">Admin Paneel</button>
+                <a href="admin.html">Admin</a>
             </span>
         </span>
     </div>
@@ -229,41 +232,34 @@
                 <input type="checkbox" name="spoed"> Spoedservice (+50%)
             </label><br><br>
 
-            <!-- Datumprikker voor offerte -->
-            <div class="datum-sectie">
-                <label for="offerte-datum">Kies een datum:</label>
-                <input type="date" id="offerte-datum" name="datum">
-                <div id="datum-fout-offerte" style="color:red; font-size:13px; margin-top:5px; display:none;"></div>
-                <div id="bezette-dagen-offerte" style="margin-top:8px; font-size:13px; color:#666;"></div>
-            </div>
-
-            <br>
-            <button type="submit">Bereken & bestel offerte</button>
+            <button type="submit">Bereken offerte</button>
         </form>
         <div id="offerte-result" style="margin-top:10px; color:green;"></div>
     </section>
 </main>
 
-<footer>
-    <p>
-        <a href="#">Contact</a> |
-        <a href="#">Social Media</a> |
-        <a href="#">Disclaimer</a>
-    </p>
-</footer>
-
-<!-- LOGIN / REGISTER MODAL -->
-<div id="auth-modal">
-    <div class="modal-content">
-        <span id="close-modal">✖</span>
-        <h3 id="modal-title">Login</h3>
-        <input type="text" id="auth-username" placeholder="Username">
-        <input type="password" id="auth-password" placeholder="Password">
-        <div id="auth-error"></div>
-        <button id="auth-submit">Login</button>
-        <p style="text-align:center;">
-            <span id="toggle-register">Geen account? Register</span>
+    <!-- FOOTER -->
+    <footer>
+        <p>
+            <a href="#">Contact</a> |
+            <a href="#">Social Media</a> |
+            <a href="#">Disclaimer</a>
         </p>
+    </footer>
+
+    <!-- LOGIN / REGISTER MODAL -->
+    <div id="auth-modal">
+        <div class="modal-content">
+            <span id="close-modal">✖</span>
+            <h3 id="modal-title">Login</h3>
+            <input type="text" id="auth-username" placeholder="Username">
+            <input type="password" id="auth-password" placeholder="Password">
+            <div id="auth-error"></div>
+            <button id="auth-submit">Login</button>
+            <p style="text-align:center;">
+                <span id="toggle-register">Geen account? Register</span>
+            </p>
+        </div>
     </div>
 </div>
 
