@@ -10,6 +10,9 @@
         main { padding:20px; }
         hr { margin:20px 0; }
 
+        /* ========================
+           AUTH MODAL
+        ======================== */
         #auth-modal {
             display:none;
             position:fixed;
@@ -17,6 +20,7 @@
             background:rgba(0,0,0,0.6);
             justify-content:center;
             align-items:center;
+            z-index: 1000;
         }
         #auth-modal .modal-content {
             background:#fff;
@@ -30,6 +34,76 @@
         #auth-modal input { width:100%; padding:5px; margin-bottom:10px; }
         #auth-modal button { width:100%; padding:7px; }
         #toggle-register { cursor:pointer; color:blue; }
+
+        /* ========================
+           PAKKET KAARTEN
+        ======================== */
+        .pakket-kaarten {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .pakket-kaart {
+            border: 2px solid #c5d6c5;
+            border-radius: 10px;
+            padding: 16px;
+            width: 200px;
+            cursor: pointer;
+            transition: 0.2s;
+            background: #f9fdf8;
+        }
+        .pakket-kaart:hover {
+            border-color: #43a047;
+            background: #e8f5e9;
+        }
+        .pakket-kaart.geselecteerd {
+            border-color: #2e7d32;
+            background: #c8e6c9;
+        }
+        .pakket-kaart h4 {
+            color: #2e7d32;
+            margin-bottom: 8px;
+        }
+        .pakket-kaart ul {
+            font-size: 13px;
+            padding-left: 16px;
+            margin: 0 0 8px 0;
+        }
+        .pakket-kaart .pakket-duur {
+            font-size: 12px;
+            color: #777;
+            font-style: italic;
+        }
+
+        /* ========================
+           DATUMPRIKKER
+        ======================== */
+        .datum-sectie {
+            margin-top: 15px;
+        }
+        .datum-sectie label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: block;
+        }
+        #datum-input {
+            padding: 8px;
+            border: 1px solid #c5d6c5;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        #datum-fout {
+            color: red;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+        #bezette-dagen-info {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -61,23 +135,74 @@
 
     <hr>
 
+    <!-- ========================
+         STANDAARD PAKKETTEN
+    ======================== -->
     <section>
         <h3>Standaard Pakketten</h3>
+        <p style="font-size:14px; color:#555; margin-bottom:14px;">Klik op een pakket om het te selecteren en te lezen wat er in zit.</p>
+
+        <!-- Pakket kaarten met uitleg -->
+        <div class="pakket-kaarten">
+            <div class="pakket-kaart" data-pakket="onderhoud" onclick="selecteerPakket('onderhoud', this)">
+                <h4>🌿 Tuin Onderhoud</h4>
+                <ul>
+                    <li>Gazon maaien</li>
+                    <li>Onkruid verwijderen</li>
+                    <li>Borders bijhouden</li>
+                    <li>Opruimen & harken</li>
+                </ul>
+                <div class="pakket-duur">⏱ Duurt: 1 dag</div>
+            </div>
+
+            <div class="pakket-kaart" data-pakket="snoeien" onclick="selecteerPakket('snoeien', this)">
+                <h4>✂️ Snoeien</h4>
+                <ul>
+                    <li>Hagen snoeien</li>
+                    <li>Struiken en bomen</li>
+                    <li>Vormsnoei op maat</li>
+                    <li>Snoeiafval opruimen</li>
+                </ul>
+                <div class="pakket-duur">⏱ Duurt: 1 dag</div>
+            </div>
+
+            <div class="pakket-kaart" data-pakket="aanleg" onclick="selecteerPakket('aanleg', this)">
+                <h4>🏡 Tuinaanleg</h4>
+                <ul>
+                    <li>Ontwerp & planning</li>
+                    <li>Tegels & bestrating</li>
+                    <li>Beplanting aanleggen</li>
+                    <li>Afwerking & oplevering</li>
+                </ul>
+                <div class="pakket-duur">⏱ Duurt: 3 dagen</div>
+            </div>
+        </div>
+
         <form class="requires-login" id="pakket-form">
-            <label for="pakket">Kies een pakket:</label>
-            <select id="pakket" name="pakket">
-                <option value="">-- Kies een pakket --</option>
-                <option value="onderhoud">Tuin onderhoud</option>
-                <option value="snoeien">Snoeien</option>
-                <option value="aanleg">Tuinaanleg</option>
-            </select>
-            <button type="submit">Bestel</button>
+            <!-- Verborgen veld; waarde wordt gezet door kaart-klik -->
+            <input type="hidden" id="pakket" name="pakket" value="">
+
+            <p id="pakket-keuze-label" style="font-weight:600; color:#2e7d32; min-height:20px;"></p>
+
+            <!-- Datumprikker voor pakketten -->
+            <div class="datum-sectie">
+                <label for="pakket-datum">Kies een datum:</label>
+                <input type="date" id="pakket-datum" name="datum">
+                <div id="datum-fout-pakket" style="color:red; font-size:13px; margin-top:5px; display:none;"></div>
+                <div id="bezette-dagen-pakket" style="margin-top:8px; font-size:13px; color:#666;"></div>
+            </div>
+
+            <br>
+            <button type="submit">Bestel pakket</button>
         </form>
         <div id="pakket-result" style="margin-top:10px; color:green;"></div>
     </section>
 
     <hr>
 
+    <!-- ========================
+         CUSTOM OFFERTE
+    ======================== -->
     <section>
         <h3>Custom Offerte</h3>
         <form class="requires-login" id="offerte-form">
@@ -104,7 +229,16 @@
                 <input type="checkbox" name="spoed"> Spoedservice (+50%)
             </label><br><br>
 
-            <button type="submit">Bereken offerte</button>
+            <!-- Datumprikker voor offerte -->
+            <div class="datum-sectie">
+                <label for="offerte-datum">Kies een datum:</label>
+                <input type="date" id="offerte-datum" name="datum">
+                <div id="datum-fout-offerte" style="color:red; font-size:13px; margin-top:5px; display:none;"></div>
+                <div id="bezette-dagen-offerte" style="margin-top:8px; font-size:13px; color:#666;"></div>
+            </div>
+
+            <br>
+            <button type="submit">Bereken & bestel offerte</button>
         </form>
         <div id="offerte-result" style="margin-top:10px; color:green;"></div>
     </section>

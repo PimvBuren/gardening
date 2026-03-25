@@ -1,269 +1,297 @@
 const express = require("express");
-const fs = require("fs");
-const path = require("path");
 const session = require("express-session");
+const fs      = require("fs");
+const path    = require("path");
 
 const app = express();
-
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.use(session({
-    secret: "geheim123",
-    resave: false,
-    saveUninitialized: true
-}));
-
 app.use(express.static(__dirname));
 
-const USERS_FILE = path.join(__dirname, "data/user.json");
-const ORDERS_FILE = path.join(__dirname, "data/order.json");
+app.use(session({
+    secret: "groen-gewoon-doen-secret",
+    resave: false,
+    saveUninitialized: false
+}));
 
-const RATES_FILE = path.join(__dirname, "data/rates.json");
+// ========================
+// HELPERS
+// ========================
 
-function readRates(){
-    const data = fs.readFileSync(RATES_FILE, "utf-8");
-    return JSON.parse(data);
+const USERS_FILE  = path.join(__dirname, "data", "users.json");
+const ORDERS_FILE = path.join(__dirname, "data", "orders.json");
+const RATES_FILE  = path.join(__dirname, "data", "rates.json");
+
+function readJSON(file) {
+    if (!fs.existsSync(file)) return [];
+    return JSON.parse(fs.readFileSync(file, "utf8"));
+}
+function writeJSON(file, data) {
+    fs.writeFileSync(file, JSON.stringify(data, null, 2));
 }
 
-app.get("/rates", (req,res)=>{
-    const rates = readRates();
+// ========================
+// PAKKET DUUR (moet overeenkomen met index.js)
+// ========================
+const PAKKET_DUUR = {
+    onderhoud: 1,
+    snoeien:   1,
+    aanleg:    3
+};
+const OFFERTE_DUUR = 1;
+
+/**
+ * Berekent alle bezette datums voor een gebruiker op basis van hun
+ * goedgekeurde of lopende bestellingen.
+ */
+function getBezetteDatumsVoorUser(username) {
+    const orders  = readJSON(ORDERS_FILE);
+    const bezet   = new Set();
+
+    orders
+        .filter(o =>
+            o.username === username &&
+            o.datum &&
+            (o.status === "goedgekeurd" || o.status === "in behandeling")
+        )
+        .forEach(o => {
+            const duur = o.type === "pakket"
+                ? (PAKKET_DUUR[o.pakket] || 1)
+                : OFFERTE_DUUR;
+
+            const startDatum = new Date(o.datum + "T12:00:00");
+            for (let i = 0; i < duur; i++) {
+                bezet.add(startDatum.toISOString().split("T")[0]);
+                startDatum.setDate(startDatum.getDate() + 1);
+            }
+        });
+
+    return Array.from(bezet).sort();
+}
+
+/**
+ * Controleert of een nieuwe bestelling overlapt met bestaande boekingen.
+ * Geeft true terug als er een overlap is.
+ */
+function heeftOverlap(username, startDatumStr, duur) {
+    const bezet = getBezetteDatumsVoorUser(username);
+
+    // Bereken de dagen die de nieuwe bestelling bezet
+    const nieuweDagen = [];
+    const d = new Date(startDatumStr + "T12:00:00");
+    for (let i = 0; i < duur; i++) {
+        nieuweDagen.push(d.toISOString().split("T")[0]);
+        d.setDate(d.getDate() + 1);
+    }
+
+    return nieuweDagen.some(dag => bezet.includes(dag));
+}
+
+// ========================
+// AUTH ROUTES
+// ========================
+
+app.post("/register", (req, res) => {
+    const { username, password } = req.body;
+    const users = readJSON(USERS_FILE);
+
+    if (users.find(u => u.username === username)) {
+        return res.json({ error: "Gebruikersnaam al in gebruik" });
+    }
+
+    users.push({ username, password, admin: false });
+    writeJSON(USERS_FILE, users);
+    req.session.user = { username, admin: false };
+    res.json({ success: true, username });
+});
+
+app.post("/login", (req, res) => {
+    const { username, password } = req.body;
+    const users = readJSON(USERS_FILE);
+    const user  = users.find(u => u.username === username && u.password === password);
+
+    if (!user) return res.json({ error: "Onjuiste gebruikersnaam of wachtwoord" });
+
+    req.session.user = { username: user.username, admin: user.admin };
+    res.json({ success: true, username: user.username, admin: user.admin });
+});
+
+app.get("/check-login", (req, res) => {
+    if (req.session.user) {
+        res.json(req.session.user);
+    } else {
+        res.json(null);
+    }
+});
+
+app.get("/logout", (req, res) => {
+    req.session.destroy();
+    res.json({ success: true });
+});
+
+// ========================
+// BEZETTE DATUMS ROUTE
+// Geeft alle bezette datums terug voor de ingelogde gebruiker
+// ========================
+
+app.get("/bezette-datums", (req, res) => {
+    if (!req.session.user) return res.json([]);
+    const bezet = getBezetteDatumsVoorUser(req.session.user.username);
+    res.json(bezet);
+});
+
+// ========================
+// RATES ROUTE
+// ========================
+
+app.get("/rates", (req, res) => {
+    const rates = readJSON(RATES_FILE);
     res.json(rates);
 });
 
-// VERBETERDE FUNCTIE: Handelt lege bestanden en errors af
-function readUsers() { 
-    try {
-        const data = fs.readFileSync(USERS_FILE, 'utf-8');
-        // Als het bestand leeg is, return lege array
-        if (!data || data.trim() === '') return [];
-        return JSON.parse(data);
-    } catch (err) {
-        // Als het bestand niet bestaat of kapot is, return lege array
-        console.error('Error reading users:', err.message);
-        return [];
+// ========================
+// BESTEL PAKKET
+// ========================
+
+app.post("/bestel-pakket", (req, res) => {
+    if (!req.session.user) return res.json({ error: "Niet ingelogd" });
+
+    const { pakket, datum } = req.body;
+
+    if (!pakket) return res.json({ error: "Geen pakket opgegeven" });
+    if (!datum)  return res.json({ error: "Geen datum opgegeven" });
+
+    // Werkdag-check (server-side)
+    const dag = new Date(datum + "T12:00:00").getDay();
+    if (dag === 0 || dag === 6) return res.json({ error: "Kies een werkdag" });
+
+    // Overlap-check
+    const duur = PAKKET_DUUR[pakket] || 1;
+    if (heeftOverlap(req.session.user.username, datum, duur)) {
+        return res.json({ error: "Deze datum overlapt met een bestaande boeking. Kies een andere datum." });
     }
-}
 
-function saveUsers(users) { 
-    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2)); 
-}
+    const orders = readJSON(ORDERS_FILE);
+    const id = orders.length > 0 ? Math.max(...orders.map(o => o.id)) + 1 : 1;
+    const nu = new Date();
 
-function readOrders() {
-    try {
-        const data = fs.readFileSync(ORDERS_FILE, 'utf-8');
-        if (!data || data.trim() === '') return [];
-        return JSON.parse(data);
-    } catch (err) {
-        console.error('Error reading orders:', err.message);
-        return [];
+    const order = {
+        id,
+        username: req.session.user.username,
+        type:     "pakket",
+        pakket,
+        datum,
+        aangemeld_op: nu.toISOString().split("T")[0],
+        tijd:         nu.toTimeString().split(" ")[0],
+        status:       "in behandeling"
+    };
+
+    orders.push(order);
+    writeJSON(ORDERS_FILE, orders);
+    res.json({ success: true, order });
+});
+
+// ========================
+// BESTEL OFFERTE
+// ========================
+
+app.post("/bestel-offerte", (req, res) => {
+    if (!req.session.user) return res.json({ error: "Niet ingelogd" });
+
+    const { gras, tegels, heg, afval, spoed, datum } = req.body;
+
+    if (!datum) return res.json({ error: "Geen datum opgegeven" });
+
+    // Werkdag-check (server-side)
+    const dag = new Date(datum + "T12:00:00").getDay();
+    if (dag === 0 || dag === 6) return res.json({ error: "Kies een werkdag" });
+
+    // Overlap-check
+    if (heeftOverlap(req.session.user.username, datum, OFFERTE_DUUR)) {
+        return res.json({ error: "Deze datum overlapt met een bestaande boeking. Kies een andere datum." });
     }
-}
 
-function saveOrders(orders) {
-    fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2));
-}
-
-// Bereken prijs voor custom offerte
-function calculatePrice(gras, tegels, heg, afval, spoed) {
-
-    const rates = readRates();
+    const rates = readJSON(RATES_FILE);
     let prijs = 0;
-
-    prijs += gras * rates.gras_per_m2;
-    prijs += tegels * rates.tegels_per_m2;
-    prijs += heg * rates.heg_per_meter;
-
+    prijs += (gras   || 0) * rates.gras_per_m2;
+    prijs += (tegels || 0) * rates.tegels_per_m2;
+    prijs += (heg    || 0) * rates.heg_per_meter;
     if (afval) prijs += rates.afval;
     if (spoed) prijs *= rates.spoed_factor;
+    prijs = Math.round(prijs);
 
-    return Math.round(prijs);
-}
+    const orders = readJSON(ORDERS_FILE);
+    const id = orders.length > 0 ? Math.max(...orders.map(o => o.id)) + 1 : 1;
+    const nu = new Date();
 
-// REGISTER
-app.post("/register", (req, res) => {
-    const { username, password } = req.body;
-    
-    if (!username || !password) {
-        return res.json({ error: "Vul alle velden in" });
-    }
-    
-    const users = readUsers();
-    
-    if (users.find(u => u.username === username)) {
-        return res.json({ error: "Gebruiker bestaat al" });
-    }
-    
-    users.push({ username, password, admin: false });
-    saveUsers(users);
-    
-    console.log('Nieuwe gebruiker geregistreerd:', username);
-    res.json({ success: true });
-});
-
-// LOGIN
-app.post("/login", (req, res) => {
-    const { username, password } = req.body;
-    const users = readUsers();
-    const user = users.find(u => u.username === username && u.password === password);
-    
-    if (!user) {
-        return res.json({ error: "Verkeerde gebruikersnaam of wachtwoord" });
-    }
-    
-    req.session.user = user;
-    console.log('Gebruiker ingelogd:', username);
-    res.json({ success: true, admin: user.admin });
-});
-
-// CHECK LOGIN
-app.get("/check-login", (req, res) => { 
-    res.json(req.session.user || null); 
-});
-
-// LOGOUT
-app.get("/logout", (req, res) => {
-    const username = req.session.user?.username;
-    req.session.destroy();
-    console.log('Gebruiker uitgelogd:', username);
-    res.json({ success: true });
-});
-
-// ADMIN DATA
-app.get("/admin-data", (req, res) => {
-    if (!req.session.user || !req.session.user.admin) {
-        return res.status(403).send("Geen toegang");
-    }
-    res.json({ message: "Admin toegang toegestaan" });
-});
-
-// BESTEL PAKKET
-app.post("/bestel-pakket", (req, res) => {
-    if (!req.session.user) {
-        return res.status(401).json({ error: "Niet ingelogd" });
-    }
-    
-    const { pakket } = req.body;
-    if (!pakket) {
-        return res.json({ error: "Geen pakket geselecteerd" });
-    }
-    
-    const orders = readOrders();
-    const newOrder = {
-        id: orders.length + 1,
+    const order = {
+        id,
         username: req.session.user.username,
-        type: "pakket",
-        pakket: pakket,
-        datum: new Date().toISOString().split('T')[0],
-        tijd: new Date().toLocaleTimeString('nl-NL'),
-        status: "in behandeling"
+        type:  "offerte",
+        gras:   gras   || 0,
+        tegels: tegels || 0,
+        heg:    heg    || 0,
+        afval:  afval  || false,
+        spoed:  spoed  || false,
+        prijs,
+        datum,
+        aangemeld_op: nu.toISOString().split("T")[0],
+        tijd:         nu.toTimeString().split(" ")[0],
+        status:       "in behandeling"
     };
-    
-    orders.push(newOrder);
-    saveOrders(orders);
-    
-    console.log('Pakket besteld:', newOrder);
-    res.json({ success: true, order: newOrder });
+
+    orders.push(order);
+    writeJSON(ORDERS_FILE, orders);
+    res.json({ success: true, order });
 });
 
-// BEREKEN EN BESTEL OFFERTE
-app.post("/bestel-offerte", (req, res) => {
-    if (!req.session.user) {
-        return res.status(401).json({ error: "Niet ingelogd" });
-    }
-    
-    const { gras, tegels, heg, afval, spoed } = req.body;
-    
-    // Converteer naar getallen
-    const grassM2 = parseInt(gras) || 0;
-    const tegelsM2 = parseInt(tegels) || 0;
-    const hegM = parseInt(heg) || 0;
-    const afvalBool = afval === 'true' || afval === true;
-    const spoedBool = spoed === 'true' || spoed === true;
-    
-    const prijs = calculatePrice(grassM2, tegelsM2, hegM, afvalBool, spoedBool);
-    
-    const orders = readOrders();
-    const newOrder = {
-        id: orders.length + 1,
-        username: req.session.user.username,
-        type: "offerte",
-        gras: grassM2,
-        tegels: tegelsM2,
-        heg: hegM,
-        afval: afvalBool,
-        spoed: spoedBool,
-        prijs: prijs,
-        datum: new Date().toISOString().split('T')[0],
-        tijd: new Date().toLocaleTimeString('nl-NL'),
-        status: "in behandeling"
-    };
-    
-    orders.push(newOrder);
-    saveOrders(orders);
-    
-    console.log('Offerte besteld:', newOrder);
-    res.json({ success: true, order: newOrder, prijs: prijs });
-});
+// ========================
+// MIJN BESTELLINGEN
+// ========================
 
-
-// ===============================
-// MIJN BESTELLINGEN (KLANT)
-// ===============================
 app.get("/mijn-bestellingen", (req, res) => {
-    if (!req.session.user) {
-        return res.status(401).json({ error: "Niet ingelogd" });
-    }
+    if (!req.session.user) return res.json({ error: "Niet ingelogd" });
 
-    const orders = readOrders();
-    const userOrders = orders.filter(o => o.username === req.session.user.username);
-
-    res.json(userOrders);
+    const orders = readJSON(ORDERS_FILE);
+    const mijn   = orders.filter(o => o.username === req.session.user.username);
+    res.json(mijn);
 });
 
+// ========================
+// ADMIN ROUTES
+// ========================
 
-// ===============================
-// ALLE ORDERS (ADMIN)
-// ===============================
 app.get("/admin/orders", (req, res) => {
-    if (!req.session.user || !req.session.user.admin) {
-        return res.status(403).json({ error: "Geen toegang" });
-    }
-
-    const orders = readOrders();
+    if (!req.session.user?.admin) return res.status(403).json({ error: "Geen toegang" });
+    const orders = readJSON(ORDERS_FILE);
     res.json(orders);
 });
 
-
-// ===============================
-// UPDATE ORDER STATUS (ADMIN)
-// ===============================
 app.put("/admin/orders/:id", (req, res) => {
-    if (!req.session.user || !req.session.user.admin) {
-        return res.status(403).json({ error: "Geen toegang" });
-    }
+    if (!req.session.user?.admin) return res.status(403).json({ error: "Geen toegang" });
 
-    const orderId = parseInt(req.params.id);
+    const id     = parseInt(req.params.id);
     const { status } = req.body;
+    const orders = readJSON(ORDERS_FILE);
+    const order  = orders.find(o => o.id === id);
 
-    const orders = readOrders();
-    const order = orders.find(o => o.id === orderId);
-
-    if (!order) {
-        return res.json({ error: "Order niet gevonden" });
-    }
+    if (!order) return res.status(404).json({ error: "Order niet gevonden" });
 
     order.status = status;
-    saveOrders(orders);
-
+    writeJSON(ORDERS_FILE, orders);
     res.json({ success: true });
 });
 
+app.post("/admin/rates", (req, res) => {
+    if (!req.session.user?.admin) return res.status(403).json({ error: "Geen toegang" });
+    writeJSON(RATES_FILE, req.body);
+    res.json({ success: true });
+});
 
+// ========================
+// START SERVER
+// ========================
 
-
-// Start server
-app.listen(3000, () => {
-    console.log("Server draait op http://localhost:3000");
-    console.log("Users bestand:", USERS_FILE);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server draait op http://localhost:${PORT}`);
 });

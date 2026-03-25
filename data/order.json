@@ -104,5 +104,28 @@
     "datum": "2026-03-18",
     "tijd": "10:53:29",
     "status": "afgewezen"
+  },
+  {
+    "id": 10,
+    "username": "job",
+    "type": "pakket",
+    "pakket": "aanleg",
+    "datum": "2026-03-19",
+    "tijd": "08:59:43",
+    "status": "in behandeling"
+  },
+  {
+    "id": 11,
+    "username": "job",
+    "type": "offerte",
+    "gras": 5,
+    "tegels": 10,
+    "heg": 1000000,
+    "afval": true,
+    "spoed": true,
+    "prijs": 15000338,
+    "datum": "2026-03-19",
+    "tijd": "09:00:31",
+    "status": "goedgekeurd"
   }
 ]
