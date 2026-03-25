@@ -1,0 +1,131 @@
+[
+  {
+    "id": 1,
+    "username": "test",
+    "type": "pakket",
+    "pakket": "onderhoud",
+    "datum": "2026-02-12",
+    "tijd": "10:03:38",
+    "status": "goedgekeurd"
+  },
+  {
+    "id": 2,
+    "username": "test",
+    "type": "offerte",
+    "gras": 3,
+    "tegels": 4,
+    "heg": 0,
+    "afval": true,
+    "spoed": false,
+    "prijs": 125,
+    "datum": "2026-02-12",
+    "tijd": "10:03:45",
+    "status": "afgewezen"
+  },
+  {
+    "id": 3,
+    "username": "test",
+    "type": "pakket",
+    "pakket": "snoeien",
+    "datum": "2026-02-25",
+    "tijd": "11:14:50",
+    "status": "goedgekeurd"
+  },
+  {
+    "id": 4,
+    "username": "test",
+    "type": "pakket",
+    "pakket": "onderhoud",
+    "datum": "2026-03-05",
+    "tijd": "09:06:51",
+    "status": "goedgekeurd"
+  },
+  {
+    "id": 5,
+    "username": "test",
+    "type": "offerte",
+    "gras": 0,
+    "tegels": 4,
+    "heg": 1,
+    "afval": true,
+    "spoed": true,
+    "prijs": 180,
+    "datum": "2026-03-05",
+    "tijd": "09:11:02",
+    "status": "goedgekeurd"
+  },
+  {
+    "id": 6,
+    "username": "test",
+    "type": "offerte",
+    "gras": 0,
+    "tegels": 0,
+    "heg": 10,
+    "afval": true,
+    "spoed": false,
+    "prijs": 150,
+    "datum": "2026-03-05",
+    "tijd": "09:47:22",
+    "status": "in behandeling"
+  },
+  {
+    "id": 7,
+    "username": "test",
+    "type": "offerte",
+    "gras": 1,
+    "tegels": 1,
+    "heg": 1,
+    "afval": true,
+    "spoed": false,
+    "prijs": 80,
+    "datum": "2026-03-05",
+    "tijd": "09:53:16",
+    "status": "goedgekeurd"
+  },
+  {
+    "id": 8,
+    "username": "test",
+    "type": "offerte",
+    "gras": 2,
+    "tegels": 0,
+    "heg": 3,
+    "afval": true,
+    "spoed": false,
+    "prijs": 90,
+    "datum": "2026-03-09",
+    "tijd": "09:14:04",
+    "status": "afgewezen"
+  },
+  {
+    "id": 9,
+    "username": "test",
+    "type": "pakket",
+    "pakket": "onderhoud",
+    "datum": "2026-03-18",
+    "tijd": "10:53:29",
+    "status": "afgewezen"
+  },
+  {
+    "id": 10,
+    "username": "job",
+    "type": "pakket",
+    "pakket": "aanleg",
+    "datum": "2026-03-19",
+    "tijd": "08:59:43",
+    "status": "in behandeling"
+  },
+  {
+    "id": 11,
+    "username": "job",
+    "type": "offerte",
+    "gras": 5,
+    "tegels": 10,
+    "heg": 1000000,
+    "afval": true,
+    "spoed": true,
+    "prijs": 15000338,
+    "datum": "2026-03-19",
+    "tijd": "09:00:31",
+    "status": "goedgekeurd"
+  }
+]

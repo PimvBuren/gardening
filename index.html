@@ -111,14 +111,11 @@
 <header style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#eee;">
     <h2>Groen & Gewoon Doen</h2>
 
-    <div style="display:flex; align-items:center; gap:10px;">
-        <button id="login-btn" style="padding:5px 10px; cursor:pointer;">Login</button>
-
-        <span id="user-status" style="display:flex; align-items:center; gap:10px; font-size:14px;">
+        <div id="user-status">
             <span id="login-status"></span>
-            <button id="logout-btn" style="display:none; padding:5px 10px; cursor:pointer;">Uitloggen</button>
+            <button id="logout-btn" style="display:none;">Uitloggen</button>
             <span id="my-orders-link" style="display:none;">
-                <a href="mijn-bestellingen.html" style="color:blue; text-decoration:underline;">Mijn bestellingen</a>
+                <a href="mijn-bestellingen.html">Mijn bestellingen</a>
             </span>
             <span id="admin-link" style="display:none;">
                 <button id="go-to-admin" style="padding:5px 10px; cursor:pointer;">Admin Paneel</button>
@@ -265,12 +262,11 @@
             <span id="toggle-register">Geen account? Register</span>
         </p>
     </div>
-</div>
 
-<!-- SCRIPTS: auth.js altijd eerst! -->
-<script src="js/auth.js"></script>
-<script src="js/header.js"></script>
-<script src="js/index.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/header.js"></script>
+    <script src="js/index.js"></script>
 
 </body>
+
 </html>
