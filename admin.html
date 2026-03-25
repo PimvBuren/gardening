@@ -9,31 +9,104 @@
 
 <body>
 
-    <header>
-        <h2>Groen & Gewoon Doen</h2>
+<header>
+    <h2>Groen & Gewoon Doen — Admin</h2>
+    <div id="user-status" style="font-size:14px; display:flex; align-items:center; gap:10px;">
+        <span id="login-status"></span>
+        <button id="logout-btn" style="display:none;">Uitloggen</button>
+        <span id="my-orders-link" style="display:none;">
+            <a href="mijn-bestellingen.html">Mijn bestellingen</a>
+        </span>
+        <span id="admin-link" style="display:none;">
+            <button id="go-to-admin">Admin Paneel</button>
+        </span>
+    </div>
+    <button id="menu-toggle">☰</button>
+    <nav id="main-nav">
+        <a href="index.html">Home</a>
+        <a href="#" id="logout-nav">Logout</a>
+    </nav>
+</header>
 
-        <div id="user-status">
-            <span id="login-status"></span>
-            <button id="logout-btn" style="display:none;">Uitloggen</button>
-            <span id="my-orders-link" style="display:none;">
-                <a href="mijn-bestellingen.html">Mijn bestellingen</a>
-            </span>
-            <span id="admin-link" style="display:none;">
-                <button id="go-to-admin">Admin Paneel</button>
-            </span>
+<main>
+
+    <!-- Statistieken -->
+    <section>
+        <h3>Overzicht</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Totaal orders</th>
+                    <th>In behandeling</th>
+                    <th>Goedgekeurd</th>
+                    <th>Afgewezen</th>
+                    <th>Totale omzet</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="stat-totaal">—</td>
+                    <td id="stat-behandeling">—</td>
+                    <td id="stat-goed">—</td>
+                    <td id="stat-af">—</td>
+                    <td id="stat-omzet">—</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <hr>
+
+    <!-- Kalender -->
+    <section>
+        <h3>Boekingskalender</h3>
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+            <button id="kal-prev">‹</button>
+            <strong id="kal-titel"></strong>
+            <button id="kal-next">›</button>
+        </div>
+        <div id="kalender-grid" style="display:grid; grid-template-columns:repeat(7,1fr); gap:4px; max-width:420px;"></div>
+        <p style="font-size:12px; color:#666; margin-top:8px;">🟢 = bezet (hover voor details)</p>
+    </section>
+
+    <hr>
+
+    <!-- Orders -->
+    <section>
+        <h3>Orders Overzicht</h3>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+            <input type="text" id="filter-user" placeholder="Zoek gebruiker…">
+            <select id="filter-status">
+                <option value="">Alle statussen</option>
+                <option value="in behandeling">In behandeling</option>
+                <option value="goedgekeurd">Goedgekeurd</option>
+                <option value="afgewezen">Afgewezen</option>
+            </select>
+            <select id="filter-type">
+                <option value="">Alle types</option>
+                <option value="pakket">Pakket</option>
+                <option value="offerte">Offerte</option>
+            </select>
         </div>
 
-        <button id="menu-toggle">☰</button>
-        <nav id="main-nav">
-            <a href="index.html">Home</a>
-            <a href="#" id="logout-nav">Logout</a>
-        </nav>
-    </header>
-
-    <main>
-        <section>
-            <h1>Beheerszijde (Admin)</h1>
-        </section>
+        <table>
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Klant</th>
+                    <th>Type</th>
+                    <th>Details</th>
+                    <th>Geboekte datum</th>
+                    <th>Aangemeld op</th>
+                    <th>Prijs</th>
+                    <th>Status</th>
+                    <th>Acties</th>
+                </tr>
+            </thead>
+            <tbody id="orders-tbody"></tbody>
+        </table>
+    </section>
 
         <section>
             <h3>Orders Overzicht</h3>
@@ -54,32 +127,40 @@
             </table>
         </section>
 
-        <hr>
+    <!-- Tarieven -->
+    <section>
+        <h3>Tarieven Beheren</h3>
+        <form id="tarieven-form">
+            <label>Prijs per m² gras
+                <input type="number" name="gras_per_m2" min="0" step="0.01">
+            </label>
+            <label>Prijs per m² tegels
+                <input type="number" name="tegels_per_m2" min="0" step="0.01">
+            </label>
+            <label>Prijs per meter heg
+                <input type="number" name="heg_per_meter" min="0" step="0.01">
+            </label>
+            <label>Afval afvoeren (vast bedrag)
+                <input type="number" name="afval" min="0" step="0.01">
+            </label>
+            <label>Spoedtoeslag (factor, bijv. 1.5)
+                <input type="number" name="spoed_factor" min="1" step="0.1">
+            </label>
+            <button type="submit">Tarieven opslaan</button>
+        </form>
+        <div id="tarieven-result" style="margin-top:10px; color:green;"></div>
+    </section>
 
-        <section>
-            <h3>Tarieven Beheren</h3>
-            <form id="tarieven-form">
-                <label>
-                    Prijs per m² gras
-                    <input type="number" name="gras_per_m2">
-                </label>
-                <label>
-                    Prijs per m² tegels
-                    <input type="number" name="tegels_per_m2">
-                </label>
-                <button type="submit">Opslaan</button>
-            </form>
-        </section>
-    </main>
+</main>
 
-    <footer>
-        © Groen & Gewoon Doen – Admin Paneel
-    </footer>
+<footer>
+    <p>© Groen & Gewoon Doen – Admin Paneel</p>
+</footer>
 
-    <script src="js/auth.js"></script>
-    <script src="js/header.js"></script>
-    <script src="js/menu.js"></script>
-    <script src="js/admin.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/header.js"></script>
+<script src="js/menu.js"></script>
+<script src="js/admin.js"></script>
 
 </body>
 
